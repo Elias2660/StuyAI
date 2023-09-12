@@ -1,11 +1,12 @@
 import re
 import subprocess
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 import csv
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -76,6 +77,34 @@ async def read_practice(request: Request):
 @app.get("/resources")
 async def read_practice(request: Request):
     return templates.TemplateResponse("resources.html", {"request": request})
+
+@app.get("/bananabread")
+async def bananabread(request: Request):
+    data = load_csv_data()
+    return templates.TemplateResponse("bananabread.html", {"request": request, "data": data})
+
+# This should be replaced with actual user data handling
+users_data = {
+    "user123": {
+        "password": "password123"
+    }
+}
+
+class UserCredentials(BaseModel):
+    username: str
+    password: str
+    secret: str
+
+@app.post("/authenticate")
+async def authenticate_user(credentials: UserCredentials):
+    username = credentials.username
+    password = credentials.password
+
+    # Check if the provided username and password match
+    if username in users_data and users_data[username]["password"] == password:
+        return {"message": credentials.secret}
+    else:
+        raise HTTPException(status_code=400, detail="Incorrect login information")
 
 @app.get("/privacy")
 async def privacy(request: Request):
