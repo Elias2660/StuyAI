@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources</title>
+    <link rel="stylesheet" href="/static/resources.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="mobile_nav">
+    <div class="logo_box">
+      <a href="/"><h2>stuyai</h2></a>
+    </div>
+    <div class="hamburger_menu" onclick="openMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div class="mobile_menu">
+    <div class="menu_items">
+      <div id="menu_resources">
+        <a href="/about"><button>About</button></a>
+        <a href="/practice"><button>Practice</button></a>
+        <a href="/blog"><button>Blog</button></a>
+        <a href="/resources"><button>Resources</button></a>
+      </div>
+      <div id="menu_actions">
+        <a href=""><button>Login</button></a>
+        <a onclick="stuyActivities()"><button>Join</button></a>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav_content">
+      <div class="logo_box">
+        <a href="/"><h2>stuyai</h2></a>
+      </div>
+      <div class="nav_buttons_box">
+  <div class="nav_buttons">
+          <a href="/about">
+            <h2>About</h2>
+          </a>
+        </div>
+        <div class="nav_buttons">
+          <a href="/practice">
+            <h2>Practice</h2>
+          </a>
+        </div>
+        <div class="nav_buttons">
+          <a href="/blog">
+            <h2>Blog</h2>
+          </a>
+        </div>
+  <div class="nav_buttons">
+          <a href="/resources">
+            <h2>Resources</h2>
+          </a>
+        </div>
+      </div>
+      <div id="action_buttons">
+        <a href="" id="login"><button>Login</button></a>
+        <a onclick="stuyActivities()" id="join"><button>Join</button></a>
+      </div>
+    </div>
+  </nav>
+      <article class="title"><h1>Resources</h1></article>
+      <div class="login-box">
+        <div class="login-container">
+          <h2>Login</h2>
+          <form class="login-form" action="#">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" required>
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required>
+              <button type="submit" onclick="alert('incorrect login info');">Login</button>
+          </form>
+      </div>
+    </div>
+    <script>
+
+	    function stuyActivities() {
+                location.href = 'https://stuyactivities.org/stuyai'
+        }
+      function openMenu() {
+        // Define the event listener function
+        function preventScroll(event) {
+            event.preventDefault();
+          }
+
+        const mobileMenu = document.querySelector('.mobile_menu');
+        const mobileNav = document.querySelector('.mobile_nav');
+        const menuItems = document.querySelector('.menu_items');
+
+        if (mobileMenu.style.display === 'flex') {
+          mobileMenu.style.display = 'none';
+          mobileMenu.style.height = '0';
+          mobileMenu.style.backgroundColor = 'transparent';
+          mobileMenu.style.position = 'static';
+          menuItems.style.height = 'auto';
+
+          // Remove the event listener using the same function reference
+          mobileMenu.removeEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.removeEventListener("wheel", preventScroll, { passive: false });
+        } else {
+          mobileMenu.style.display = 'flex';
+          mobileMenu.style.height = '100vh';
+          mobileMenu.style.backgroundColor = '#e6e6e6';
+          mobileMenu.style.position = 'fixed';
+
+          windowHeight = window.innerHeight;
+          let mobileNavHeight = mobileNav.clientHeight;
+
+          menuItems.style.height = windowHeight - mobileNavHeight + 'px';
+
+          // Add the event listener using the same function reference
+          mobileMenu.addEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.addEventListener("wheel", preventScroll, { passive: false });
+        }
+      }
+
+      const navHeight = Math.max(document.querySelector('nav').offsetHeight, document.querySelector('.mobile_nav').offsetHeight);
+        const title = document.querySelector('.title');
+        title.style.paddingTop = `${navHeight + 15}px`;
+    </script>
+</body>
+</html>

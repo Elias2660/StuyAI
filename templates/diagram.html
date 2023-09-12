@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Diagram</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="neuralNetworkCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('neuralNetworkCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawCircle(x, y, radius) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            // Make the circle the color #0A1F36
+            ctx.fillStyle = '#0A1F36';
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawLine(x1, y1, x2, y2, thickness) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineWidth = thickness;
+            ctx.stroke();
+        }
+
+        function drawNeuralNetwork() {
+            const layerSpacing = canvas.width / 4;
+            const neuronRadius = canvas.height / 6 / 2;
+            const neuronYSpacing = canvas.height / 4;
+
+            // Neurons per layer
+            const neurons = [3, 4, 4, 2];
+
+            // Draw neurons and connections
+            for (let i = 0; i < neurons.length; i++) {
+                const x = i * layerSpacing + ((canvas.width - ((neurons.length-1) * layerSpacing)) / 2);
+                for (let j = 0; j < neurons[i]; j++) {
+                    var bottomSpace = (canvas.height - ((neurons[i]-1) * neuronYSpacing)) / 2;
+                    const y = j * neuronYSpacing + bottomSpace;
+                    drawCircle(x, y, neuronRadius);
+
+                    // Draw connections between neurons of adjacent layers
+                    if (i < neurons.length - 1) {
+                        const x2 = (i + 1) * layerSpacing + ((canvas.width - ((neurons.length-1) * layerSpacing)) / 2);
+                        for (let k = 0; k < neurons[i + 1]; k++) {
+                            var nextBottomSpace = (canvas.height - ((neurons[i + 1]-1) * neuronYSpacing)) / 2;
+                            const y2 = k * neuronYSpacing + nextBottomSpace;
+                            const thickness = Math.random() * 3 + 1;
+                            drawLine(x + neuronRadius, y, x2 - neuronRadius, y2, thickness);
+                        }
+                    }
+                }
+            }
+        }
+
+        drawNeuralNetwork();
+    </script>
+</body>
+</html>

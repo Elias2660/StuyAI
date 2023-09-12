@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BananaBread</title>
+    <link rel="stylesheet" href="/static/bananabread.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="login">
+    <div class="logo_box">
+      <a href="/">
+	      <h2>stuyai</h2>
+      </a>
+    </div>
+    <div class="login-container">
+          <h2>Login</h2>
+	  <form class="login-form" onsubmit="authenticateUser(event)">
+	    <label for="username">Username</label>
+	    <input type="text" id="username" name="username" required>
+	    <label for="password">Password</label>
+	    <input type="password" id="password" name="password" required>
+	    <button type="submit">Login</button>
+	</form>
+      </div>
+    </div>
+    <div id="bananabreads">
+      {% for topic, description in data.items() %}
+      <div class="topic"><h1>{{ topic }}</h1><h2>{{ description }}</h2></div>
+      {% endfor %}
+    </div>
+    <div class="question">
+	<h1 class="question_text"></h1>
+	{% for i in range(4) %}
+	  <button class="choice"></button>
+	{% endfor %}
+    </div>
+    <div class="leaderboard">
+	<h1>Current leaderboard</h1>
+	<div class="curr_leaderboard"></div>
+    </div>
+    <div class="final_leaderboard">
+	<h1>Final leaderboard</h1>
+        <div class="the_final_leaderboard"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/static/bananabread.js"></script>
+</body>
+</html>

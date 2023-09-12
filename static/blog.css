@@ -1,0 +1,258 @@
+body {
+  background: #E6E6E6;
+  padding: 0;
+  margin: 0;
+  font-family: 'Oxygen Mono', monospace;
+}
+
+nav {
+  padding: 0px;
+  margin: 0px;
+  position: fixed;
+  width: 100%;
+  font: inherit;
+  /* Gradient background */
+  background: linear-gradient(to bottom, 
+    rgba(230,230,230,1) 0%,
+    rgba(230,230,230,1) 25%,
+    rgba(230,230,230,1) 50%,
+    rgba(230,230,230,1) 90%,
+    rgba(230,230,230,1) 95%,
+    rgba(230,230,230,0.0) 100%
+  );
+}
+
+.mobile_nav {
+  display: none;
+  position: relative;
+  margin: 0;
+  flex-direction: column;
+}
+
+.mobile_menu div {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 20px;
+  margin: 0;
+}
+
+.menu_items {
+  display: flex;
+  flex-direction: column; /* Change to column */
+  padding-left: 10px;
+  margin: 0px;
+}
+
+#menu_resources {
+  display: flex;
+  flex-direction: column; /* Change to column */
+}
+
+#menu_resources a {
+  margin: 6px;
+  padding: 5px;
+}
+
+#menu_actions {
+  display: flex;
+  flex-direction: row; /* Change to column */
+  margin: 0px;
+  align-items: flex-end;
+}
+
+#menu_actions a {
+  margin: 6px;
+  padding-top: 5px;
+}
+
+.menu_items a button,
+.menu_actions a button {
+  margin-left: 10px;
+  padding: 10px; /* Adjust padding */
+  font-size: large;
+}
+
+
+.diagram {
+  padding-left: 35px;
+  padding-right: 35px;
+}
+
+.nav_content {
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.nav_buttons_box {
+  display: flex;
+}
+
+.nav_buttons {
+  cursor: pointer;
+  height: 40px;
+  width: 100px;
+  margin-right: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oxygen Mono', monospace;
+}
+
+.logo_box h2 {
+  padding-top: 20px;
+  padding-left: 20px;
+  font-size: 2em;
+  color: black;
+  max-width: 100%;
+  height: auto;
+}
+
+.nav_buttons h2 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#action_buttons {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#action_buttons a {
+  color: #333;
+  text-decoration: none;
+  padding-left: 20px;
+}
+
+button {
+  background: #D9D9D9;
+  border-radius: 0px;
+  border: 0px solid white;
+  padding: 15px;
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.title {
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  padding-top: 100px;
+}
+
+.title h1 {
+  font-size: 3em;
+  font-weight: 100;
+  margin: 0;
+}
+
+.login-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 100vw;
+  height: 50vh;
+}
+
+.login-container {
+  background-color: #D9D9D9;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+.login-form label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.login-form input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.login-form button {
+  padding: 10px;
+  background-color: #0A1F36;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.login-form button:hover {
+  background-color: #0A1F36;
+}
+
+.mobile_menu {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  nav {
+    display: none;
+  }
+
+  .mobile_menu {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    margin: 0px;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+  }
+  
+  .mobile_nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    margin: 0px;
+  }
+}
+
+.hamburger_menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 25px;
+  height: 20px;
+  cursor: pointer;
+  padding-right: 20px;
+}
+
+.hamburger_menu span {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+}

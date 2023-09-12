@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/static/index.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+    <!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+  </head>
+  <body>
+    <div class="mobile_nav">
+      <div class="logo_box">
+        <a href="/"><h2>stuyai</h2></a>
+      </div>
+      <div class="hamburger_menu" onclick="openMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="mobile_menu">
+      <div class="menu_items">
+        <div id="menu_resources">
+          <a href="/about"><button>About</button></a>
+          <a href="/practice"><button>Practice</button></a>
+          <a href="/blog"><button>Blog</button></a>
+          <a href="/resources"><button>Resources</button></a>
+        </div>
+        <div id="menu_actions">
+          <a href=""><button>Login</button></a>
+          <a href="#waitlist"class="toWaitlist"><button>Join</button></a>
+        </div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav_content">
+        <div class="logo_box">
+          <a href="/"><h2>stuyai</h2></a>
+        </div>
+        <div class="nav_buttons_box">
+	  <div class="nav_buttons">
+            <a href="/about">
+              <h2>About</h2>
+            </a>
+          </div>
+          <div class="nav_buttons">
+            <a href="/practice">
+              <h2>Practice</h2>
+            </a>
+          </div>
+          <div class="nav_buttons">
+            <a href="/blog">
+              <h2>Blog</h2>
+            </a>
+          </div>
+	  <div class="nav_buttons">
+            <a href="/resources">
+              <h2>Resources</h2>
+            </a>
+          </div>
+        </div>
+        <div id="action_buttons">
+          <a href="" id="login"><button>Login</button></a>
+          <a href="#waitlist" class="toWaitlist" id="join"><button>Join</button></a>
+        </div>
+      </div>
+    </nav>
+    <article class="title">
+      <div id="hero_text_button">
+	<div id="hero_text">
+      	  <div id="hero_title">An AI club for everyone</div>
+      	  <div id="hero_subtext">No coding knowledge required. We aim to teach anyone how to make their own meaningful models.</div>
+      	</div>
+	<div id="hero_waitlist">
+	  <button class="action"><a href="#waitlist"class="toWaitlist"><p class="action_text">join the waitlist</p></a></button>
+	</div>
+      </div>
+      <!--800 by 500-->
+      <div id="neural_net_box"><canvas id="neuralNetworkCanvas"></canvas></div>
+    </article>
+    <article id="intro">
+      <div id="intro_text">
+        <h1>Hands-On Projects</h1>
+	<h2>Our team will guide you through meaningful projects that reflect and solve real-world problems.</h2>
+	<a href="/about"><button class="action"><p class="action_text">learn more</p></button></a>
+      </div>
+    </article>
+    <article class="section" id="vis">
+      <div class="visuals">
+        <div class="section_header">
+          <h2>World-class visuals to explain AI concepts</h2>
+          <p>Artificial intelligence uses advanced mathematics and equations to create the “intelligence” part of it. We take complex concepts and use visuals to explain how they work.</p>
+        </div>
+        <div class="learn_more">
+          <a href="/about"><button type="button" name="button">learn more</button></a>
+        </div>
+      </div>
+      <div class="diagram">
+        <canvas id="graphDiagram" width="400" height="400"></canvas>
+      </div>
+    </article>
+    <article class="section">
+      <div class="diagram">
+        <canvas id="waving"></canvas>
+      </div>
+      <div class="leaders">
+        <div class="section_header">
+          <h2>Qualified leaders to help you along your journey</h2>
+          <p>As people who have been interested in AI for a long time, we struggled through learning AI concepts. We have designed our meetings to be not just beginner friendly, but for complete beginners.</p>
+        </div>
+        <div class="learn_more">
+          <a href="/about"><button type="button" name="button">learn more</button></a>
+        </div>
+      </div>
+    </article>
+    <article class="section" id="topic">
+      <div class="topics">
+        <div class="section_header">
+          <h2>We discuss a wide range of topics</h2>
+          <p>Almost every subset of artificial intelligence is its own field. And many of the subsets of those subset are their own field as well. We try to give our members a general overview of AI.</p>
+        </div>
+        <div class="learn_more">
+          <a href="/about"><button type="button" name="button">learn more</button></a>
+        </div>
+      </div>
+      <div class="diagram">
+        <div id="shapes" width="400" height="250"></div>
+      </div>
+    </article>
+    <article id="benefits">
+      <h1>Learn valuable skills while having fun</h1>
+      <h2>Through fun activities and group projects, you will learn the workings behind machine learning, gaining hands-on experience in creating powerful AI models that can recognize patterns, make predictions, and even generate new content.</h2>
+    </article>
+    <article id="waitlist">
+      <h1>Join the waitlist</h1>
+      <button onclick="stuyActivities()">Request Membership</button>
+    </div>
+    </form>
+    </article>
+    <footer>
+      <div class="footer_main">
+        <div class="about_footer">
+          <h2>stuyai</h2>
+	  <p>We are an AI club for everyone, including beginners. Through engaging projects, you will build your own machine learning models.</p>
+	</div>
+	<div class="links_footer">
+          <div class="links_section">
+	    <h2>Browse</h2>
+	    <p><a href="/about">About Us</a></p>
+	    <p><a href="/practice">Practice</a></p>
+	    <p><a href="/blog">Blog</a></p>
+	    <p><a href="/resources">Resources</a></p>
+	  </div>
+	  <div class="links_section">
+            <h2>Socials</h2>
+            <p>Instagram</p>
+            <p>Facebook</p>
+            <p>Discord</p>
+            <p>X</p>
+          </div>
+	  <div class="links_section">
+            <h2>Contact</h2>
+            <p>info@stuyai.com</p>
+            <p>Stuyvesant High School</p>
+            <p>345 Chambers St.</p>
+            <p>New York, NY</p>
+          </div>
+	</div>
+      </div>
+      <div class="bottom_footer">
+      	<div class="copyright">
+          &copy; 2023 stuyai. All rights reserved.
+        </div>
+        <div class="priv">
+		<a href="/privacy">Privacy Policy</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+    $('#membershipForm').submit(function(event) {
+        event.preventDefault();
+
+        // Gather form data
+        const formData = $(this).serializeArray();
+
+        // Convert the form data to an object
+        const formDataObject = {};
+        for (const field of formData) {
+            formDataObject[field.name] = field.value;
+        }
+
+	console.log(formDataObject)
+
+        // Send AJAX request
+        $.ajax({
+            url: '/waitlist', // Replace with your FastAPI endpoint URL
+            type: 'POST',
+            data: JSON.stringify(formDataObject),
+            contentType: 'application/json',
+            success: function(response) {
+                alert('You have been added to the waitlist.');
+            },
+            error: function(error) {
+                console.error('Error sending data:', error);
+            }
+        });
+    });
+
+      function openMenu() {
+        // Define the event listener function
+        function preventScroll(event) {
+            event.preventDefault();
+          }
+
+        const mobileMenu = document.querySelector('.mobile_menu');
+        const mobileNav = document.querySelector('.mobile_nav');
+        const menuItems = document.querySelector('.menu_items');
+
+        if (mobileMenu.style.display === 'flex') {
+          mobileMenu.style.display = 'none';
+          mobileMenu.style.height = '0';
+          mobileMenu.style.backgroundColor = 'transparent';
+          mobileMenu.style.position = 'static';
+          menuItems.style.height = 'auto';
+
+          // Remove the event listener using the same function reference
+          mobileMenu.removeEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.removeEventListener("wheel", preventScroll, { passive: false });
+        } else {
+          mobileMenu.style.display = 'flex';
+          mobileMenu.style.height = '100vh';
+          mobileMenu.style.backgroundColor = '#e6e6e6';
+          mobileMenu.style.position = 'fixed';
+
+          windowHeight = window.innerHeight;
+          let mobileNavHeight = mobileNav.clientHeight;
+
+          menuItems.style.height = windowHeight - mobileNavHeight + 'px';
+
+          // Add the event listener using the same function reference
+          mobileMenu.addEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.addEventListener("wheel", preventScroll, { passive: false });
+        }
+      }
+
+
+        const canvas = document.getElementById('neuralNetworkCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawCircle(x, y, radius) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+	    ctx.fillStyle = '#0A1F36';
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawLine(x1, y1, x2, y2, thickness) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.lineWidth = thickness;
+            ctx.stroke();
+        }
+
+        function drawNeuralNetwork() {  
+
+          // Get the screen width
+          const screenWidth = window.innerWidth;
+
+          // Set the initial width and height
+          let width = 800;
+          let height = 500;
+
+          // Check if the screen width is less than 768
+          if (screenWidth < 768) {
+            width = screenWidth - 50;
+            height = width * (500 / 800); // Maintain the aspect ratio
+          }
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+
+          const scale = window.devicePixelRatio;
+          canvas.width = width * scale;
+          canvas.height = height * scale;
+
+          // Normalize coordinate system to use css pixels.
+          
+
+            const layerSpacing = canvas.width / 4;
+            const neuronRadius = canvas.height / 6 / 2;
+            const neuronYSpacing = canvas.height / 4;
+
+            // Neurons per layer
+            const neurons = [3, 4, 4, 2];
+
+            // Draw neurons and connections
+            for (let i = 0; i < neurons.length; i++) {
+                const x = i * layerSpacing + ((canvas.width - ((neurons.length-1) * layerSpacing)) / 2);
+                for (let j = 0; j < neurons[i]; j++) {
+                    var bottomSpace = (canvas.height - ((neurons[i]-1) * neuronYSpacing)) / 2;
+                    const y = j * neuronYSpacing + bottomSpace;
+                    drawCircle(x, y, neuronRadius);
+
+                    // Draw connections between neurons of adjacent layers
+                    if (i < neurons.length - 1) {
+                        const x2 = (i + 1) * layerSpacing + ((canvas.width - ((neurons.length-1) * layerSpacing)) / 2);
+                        for (let k = 0; k < neurons[i + 1]; k++) {
+                            var nextBottomSpace = (canvas.height - ((neurons[i + 1]-1) * neuronYSpacing)) / 2;
+                            const y2 = k * neuronYSpacing + nextBottomSpace;
+                            const thickness = Math.random() * 3 + 1;
+                            drawLine(x + neuronRadius, y, x2 - neuronRadius, y2, thickness);
+                        }
+                    }
+                }
+            }
+            ctx.scale(scale, scale);
+        }
+
+        drawNeuralNetwork();
+        setInterval(drawNeuralNetwork, 1200);
+
+	function stuyActivities() {
+		location.href = 'https://stuyactivities.org/stuyai'
+	}
+
+        function smoothScroll(e) {
+            const mobileMenu = document.querySelector('.mobile_menu');
+            if (mobileMenu.style.display === 'flex') {
+                openMenu();
+            }
+
+            e.preventDefault();
+
+            const targetId = e.currentTarget.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            const offsetTop = targetSection.offsetTop - 100;
+
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+
+        // Get the specific link elements by their class
+        const smoothScrollLinks = document.querySelectorAll('.toWaitlist');
+
+        // Attach the smoothScroll function to the click event of each link
+        smoothScrollLinks.forEach(link => {
+            link.addEventListener('click', smoothScroll);
+        });
+
+        function makeDiagram() {
+          const canvas = document.getElementById('graphDiagram');
+        const ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const scale = window.devicePixelRatio;
+        const windowWidth = window.innerWidth;
+        const width = 400;
+        const height = 400;
+        if (windowWidth < 400) {
+          canvas.width = windowWidth * scale;
+          canvas.height = windowWidth * scale;
+        } else {
+          canvas.width = width * scale;
+          canvas.height = height * scale;
+        }
+        // Function to draw a point on the canvas
+        function drawPoint(x, y, color) {
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Function to draw a line on the canvas
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+        }
+
+        // Generate random points within the first quadrant
+        const points = [];
+        for (let i = 0; i < 40; i++) {
+            let x, y, color;
+            if (Math.random() < 0.5) {
+                x = Math.random() * canvas.width / 4 + 50;
+                y = canvas.height - (Math.random() * canvas.height / 2 + 50);
+                color = '#3D7B89';
+            } else {
+                x = Math.random() * canvas.width / 2 + canvas.width / 2;
+                y = Math.random() * canvas.height / 2;
+                while (x > canvas.width - 50 || y < 50) {
+                  x = Math.random() * canvas.width / 2 + canvas.width / 2;
+                  y = Math.random() * canvas.height / 2;
+                }
+                color = 'navy';
+            }
+            points.push({ x, y, color });
+        }
+
+        
+
+        // Function to draw the arrowhead and axis lines
+        function drawArrowhead(x, y, angle) {
+          const arrowLength = 20; // Length of the arrowhead lines
+          ctx.beginPath()
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - arrowLength * Math.cos(angle - Math.PI / 6), y - arrowLength * Math.sin(angle - Math.PI / 6));
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - arrowLength * Math.cos(angle + Math.PI / 6), y - arrowLength * Math.sin(angle + Math.PI / 6));
+          ctx.lineWidth = 5;
+          ctx.stroke();
+        }
+
+        // Draw x-axis (bottom) with arrowhead
+        const xAxisEndX = canvas.width - 20;
+        const xAxisEndY = canvas.height - 20;
+        drawLine(20, xAxisEndY, xAxisEndX, xAxisEndY);
+        drawArrowhead(xAxisEndX, xAxisEndY, 0);
+
+        // Draw y-axis (left) with arrowhead
+        const yAxisEndX = 20;
+        const yAxisEndY = 20;
+        drawLine(yAxisEndX, 20, yAxisEndX, canvas.height - 20);
+        drawArrowhead(yAxisEndX, yAxisEndY, -Math.PI / 2);
+
+
+        // Draw points
+        points.forEach(point => {
+            drawPoint(point.x, point.y, point.color);
+        });
+
+        // Calculate the average of turquoise points
+        const turquoisePoints = points.filter(point => point.color === '#3D7B89');
+        const turquoiseMidpoint = {
+            x: turquoisePoints.reduce((sum, point) => sum + point.x, 0) / turquoisePoints.length,
+            y: turquoisePoints.reduce((sum, point) => sum + point.y, 0) / turquoisePoints.length
+        };
+
+        //drawPoint(turquoiseMidpoint.x, turquoiseMidpoint.y, 'red');
+
+        // Calculate the average of navy points
+        const navyPoints = points.filter(point => point.color === 'navy');
+        const navyMidpoint = {
+            x: navyPoints.reduce((sum, point) => sum + point.x, 0) / navyPoints.length,
+            y: navyPoints.reduce((sum, point) => sum + point.y, 0) / navyPoints.length
+        };
+
+        //drawPoint(navyMidpoint.x, navyMidpoint.y, 'red');
+
+        // Calculate the slope between turquoise and navy midpoints
+        const slope = (navyMidpoint.y - turquoiseMidpoint.y) / (navyMidpoint.x - turquoiseMidpoint.x);
+
+        // Calculate the perpendicular slope
+        const perpendicularSlope = -1 / slope;
+
+        // Calculate the y-intercept for the perpendicular line (passes through the midpoint)
+        const midpointX = (turquoiseMidpoint.x + navyMidpoint.x) / 2;
+        const midpointY = (turquoiseMidpoint.y + navyMidpoint.y) / 2;
+        const yIntercept = midpointY - perpendicularSlope * midpointX;
+
+        // Calculate the x and y values for the endpoints of the perpendicular line
+        // Calculate when y1 is 0
+        const x1 = yIntercept / -perpendicularSlope + 25 + 25;
+        const y1 = perpendicularSlope * x1 + yIntercept;
+
+        // Calculate when y2 is 0
+        const x2 = (canvas.height - yIntercept) / perpendicularSlope - 25 - 15;
+        const y2 = perpendicularSlope * x2 + yIntercept;
+
+        // Draw the perpendicular line
+        drawLine(x1, y1, x2, y2);
+        ctx.scale(scale, scale);
+        // Get window width
+        const screenWidth = window.innerWidth;
+        console.log(screenWidth)
+        if (screenWidth > 400) {
+        canvas.style.maxWidth = 400 + "px";
+        canvas.style.maxHeight = 400 + "px";
+        } else {
+        canvas.style.maxWidth = screenWidth - 10 + "px";
+        canvas.style.maxHeight = screenWidth - 10 + "px";
+        }
+      }
+        makeDiagram();
+        setInterval(makeDiagram, 2000);
+
+
+        (function() {
+    const canvas = document.getElementById('waving');
+    const ctx = canvas.getContext('2d');
+  
+    const scale = window.devicePixelRatio;
+
+    console.log(`The scale is ${scale}`)
+  
+    let width = 600;
+    let height = 200;
+    const screenWidth = window.innerWidth;
+  
+    if (width * scale + 20 > screenWidth) {
+      if (screenWidth < 768) {
+        width = screenWidth - 20;
+      } else {
+        width = (screenWidth / scale) - 20; // Adjust the width to fit within the screen
+      }
+      height = width * (height / width) - 20; // Maintain the aspect ratio
+    }
+  
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+  
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+  
+    console.log(`The width is ${canvas.width}`)
+  
+    const stickFigures = [
+      { x: (canvas.width/scale) * 0.1, y: (canvas.height/scale) * 0.6, angle: 0 },   // Position the stick figures based on the canvas width and height
+      { x: (canvas.width/scale) * 0.3, y: (canvas.height/scale) * 0.6, angle: 0 },
+      { x: (canvas.width/scale) * 0.5, y: (canvas.height/scale) * 0.6, angle: 0 },
+      { x: (canvas.width/scale) * 0.7, y: (canvas.height/scale) * 0.6, angle: 0 }
+    ];
+  
+    function drawStickFigure(x, y, angle) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+  
+      // Head (circle)
+      ctx.beginPath();
+      ctx.arc(0, -80, 20, 0, 2 * Math.PI);
+      ctx.fillStyle = 'black';
+      ctx.fill();
+  
+      // Body
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -60);
+      ctx.strokeStyle = 'black';
+      ctx.stroke();
+  
+      // Arms
+      ctx.moveTo(0, -20);
+      ctx.lineTo(-30, -40);
+      ctx.moveTo(0, -20);
+      ctx.lineTo(30, -40);
+      ctx.stroke();
+  
+      // Legs
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-20, 40);
+      ctx.moveTo(0, 0);
+      ctx.lineTo(20, 40);
+      ctx.stroke();
+  
+      ctx.restore();
+    }
+  
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      stickFigures.forEach(stickFigure => {
+        stickFigure.angle = Math.sin(Date.now() * 0.001) * 0.1; // Adjust the wave speed
+        drawStickFigure(stickFigure.x, stickFigure.y, stickFigure.angle);
+      });
+  
+      requestAnimationFrame(animate);
+    }
+    ctx.scale(scale, scale);
+    animate();
+  })();
+
+
+
+(function() {
+  const scale = window.devicePixelRatio;
+
+  let width = 400;
+  let height = 250;
+  const screenWidth = window.innerWidth;
+
+  if (width * scale + 20 > screenWidth) {
+    width = screenWidth - 35 - 35 - 20; // Adjust the width to fit within the screen
+    height = width * (height / width); // Maintain the aspect ratio
+  }
+
+  console.log(width, height)
+
+  const { Engine, Render, Runner, Bodies, Composite, World } = Matter;
+
+  const engine = Engine.create();
+
+  const render = Render.create({
+    element: document.getElementById('shapes'),
+    engine: engine,
+    options: {
+      width: width,
+      height: height,
+      background: 'transparent',
+      wireframes: false // To show filled shapes instead of wireframes
+    }
+  });
+
+  // Create walls (sides and bottom)
+  const wallOptions = { isStatic: true, render: { fillStyle: 'black' } };
+  const leftWall = Bodies.rectangle(0, height / 2, 1, height, wallOptions); // Use height for the wall
+  const rightWall = Bodies.rectangle(width, height / 2, 1, height, wallOptions); // Use width for the wall
+  const bottomWall = Bodies.rectangle(width / 2, height, width, 1, wallOptions); // Use width and height for the wall
+
+  const groundWidth = width / 2; // Adjust the width of the ground (box) based on the canvas width
+  const groundHeight = 0; // Adjust the height of the ground (box)
+  const ground = Bodies.rectangle(width / 2, height - 2.5, groundWidth, groundHeight, { // Adjust the y position of the ground based on height
+    isStatic: true,
+    render: { fillStyle: 'black' }
+  });
+
+  Composite.add(engine.world, [leftWall, rightWall, bottomWall, ground]);
+
+  const runner = Runner.create();
+
+  Runner.run(runner, engine);
+  Render.run(render);
+
+  // Counter to keep track of the number of shapes created
+  let shapeCount = 0;
+
+  // Function to create shapes and add them to the world
+  function createShape(x, y) {
+    const sides = Math.floor(Math.random() * 4) + 3; // Random number of sides (3 to 6)
+    const radius = width / 10; // Adjust the radius based on the canvas width
+    const shape = Bodies.polygon(x, y, sides, radius, {
+      frictionAir: 0.05,
+      restitution: 0.6,
+      render: {
+        fillStyle: getRandomBlueColor()
+      }
+    });
+
+    // Set random initial velocity
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = width / 40; // Adjust the speed of the shapes based on the canvas width
+    shape.velocity.x = velocity * Math.cos(angle);
+    shape.velocity.y = velocity * Math.sin(angle);
+
+    Composite.add(engine.world, shape);
+
+    // Increment the shape count
+    shapeCount++;
+
+    // Remove 5-10 shapes if the count reaches 14
+    if (shapeCount >= 14) {
+      const shapes = Composite.allBodies(engine.world);
+      const shapesToRemoveCount = shapeCount;
+      const shapesToRemove = shapes.slice(-shapesToRemoveCount); // Get random shapes to remove
+      World.remove(engine.world, shapesToRemove);
+      shapeCount -= shapesToRemoveCount; // Decrement the shape count accordingly
+    }
+  }
+
+  // Function to generate a random blue color
+  function getRandomBlueColor() {
+    const randomShade = Math.floor(Math.random() * 100);
+    return `rgb(30, 30, ${100 + randomShade})`;
+  }
+
+  // Create shapes every 2 seconds
+  setInterval(() => createShape(Math.random() * width, -50), 2000); // Use width for the random x position
+})();
+
+// Get all elements with the class diagram and set the max width to the width of the screen minus 20px on either side for padding
+const diagrams = document.querySelectorAll('.diagram');
+diagrams.forEach(diagram => {
+  diagram.style.maxWidth = `${window.innerWidth - 40}px`;
+});
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="/static/about.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="mobile_nav">
+    <div class="logo_box">
+      <a href="/"><h2>stuyai</h2></a>
+    </div>
+    <div class="hamburger_menu" onclick="openMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div class="mobile_menu">
+    <div class="menu_items">
+      <div id="menu_resources">
+        <a href="/about"><button>About</button></a>
+        <a href="/practice"><button>Practice</button></a>
+        <a href="/blog"><button>Blog</button></a>
+        <a href="/resources"><button>Resources</button></a>
+      </div>
+      <div id="menu_actions">
+        <a href=""><button>Login</button></a>
+        <a onclick="stuyActivities()"><button>Join</button></a>
+      </div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav_content">
+      <div class="logo_box">
+        <a href="/"><h2>stuyai</h2></a>
+      </div>
+      <div class="nav_buttons_box">
+  <div class="nav_buttons">
+          <a href="/about">
+            <h2>About</h2>
+          </a>
+        </div>
+        <div class="nav_buttons">
+          <a href="/practice">
+            <h2>Practice</h2>
+          </a>
+        </div>
+        <div class="nav_buttons">
+          <a href="/blog">
+            <h2>Blog</h2>
+          </a>
+        </div>
+  <div class="nav_buttons">
+          <a href="/resources">
+            <h2>Resources</h2>
+          </a>
+        </div>
+      </div>
+      <div id="action_buttons">
+        <a href="" id="login"><button>Login</button></a>
+        <a onclick="stuyActivities()" id="join"><button>Join</button></a>
+      </div>
+    </div>
+  </nav>
+  <div id="title_page">About</div>
+  <div class="title">
+    <canvas id="canvas" class="rotate-90"></canvas>
+  </div>
+  <div class="subtext">Discussion Topics</div>
+  <div class="topics">
+    <div class="topic">
+      <canvas class="special_triangle" class="t1" id="st1"></canvas>
+      <div class="topic_content">
+        <h2>Understanding Python</h2>
+        <p>An introduction to programming
+          concepts for beginners and more 
+          advanced concepts for those with
+          prior experience.</p>
+      </div>
+    </div>
+    <div class="topic">
+      <canvas class="special_triangle" class="t2" id="st2"></canvas>
+      <div class="topic_content">
+        <h2>Data Manipulation</h2>
+        <p>Use NumPy and Pandas to draw
+          insights from complex datasets</p>
+      </div>
+    </div>
+    <div class="topic">
+      <canvas class="special_triangle" class="t3" id="st3"></canvas>
+      <div class="topic_content">
+        <h2>Supervised Learning</h2>
+        <p>Map an input to an output, enabling
+          you to predict and classify</p>
+      </div>
+    </div>
+    <div class="topic">
+      <canvas class="special_triangle" class="t1" id="st4"></canvas>
+      <div class="topic_content">
+        <h2>Computer Vision</h2>
+        <p>Explore image classification
+          with convolutional neural networks,
+          which can work with less than
+          one hundred images.</p>
+      </div>
+    </div>
+    <div class="topic">
+      <canvas class="special_triangle" class="t2" id="st5"></canvas>
+      <div class="topic_content">
+        <h2>Natural Language Processing</h2>
+        <p>Understand how computers understand
+          language and generate text</p>
+      </div>
+    </div>
+    <div class="topic">
+      <canvas class="special_triangle" class="t3" id="st6"></canvas>
+      <div class="topic_content">
+        <h2>Generative AI</h2>
+        <p>Discover techniques to generate images,
+          and generate your own images.</p>
+      </div>
+    </div>
+  </div>
+  <div class="leaders">
+    <div class="otzar">
+      <canvas id="Otzar"></canvas>
+      <div class="pic-leader">
+        <img src="/static/p1ai.jpg" alt="">
+      </div>
+    </div>
+    <div class="elias">
+      <canvas id="Elias"></canvas>
+      <div class="pic-leader">
+        <img src="/static/p2ai.jpg" alt="">
+      </div>
+    </div>
+    <div class="theodore">
+      <canvas id="Theodore"></canvas>
+      <div class="pic-leader">
+        <img src="/static/p3ai.jpg" alt="">
+      </div>
+    </div>
+    <div class="junling">
+      <canvas id="Junling"></canvas>
+      <div class="pic-leader">
+        <img src="/static/p4ai.jpg" alt="">
+      </div>
+    </div>
+  </div>
+  <article id="benefits">
+    <h1>FAQs</h1>
+    <h2>Is this a high or low commitment club?</h2>
+    <p>We will have two meetings per week. You will only need to join one of them. One will be more concept-oriented and the other will be more coding-based.</p>
+    <h2>Why this club?</h2>
+    <p>If you can only put one club in Stuyvesant on your college application, it would be the AI club. We will make our lessons publicly available so that you can send them to colleges to show the rigor of the content we go through. We will give you a personalized certificate too.</p>
+    <h2>What's up with all the animations?</h2>
+    <p>The animations on this page reflect how we will break down complex concepts to make them understandable. The shapes start with many sides, and then become the simpliest shape, a triangle.</p>
+  </article>
+  <article id="waitlist">
+    <h1>Join the waitlist</h1>
+    <button onclick="stuyActivities()">Request Membership</button>
+  </article>
+  <footer>
+    <div class="footer_main">
+      <div class="about_footer">
+        <h2>stuyai</h2>
+  <p>We are an AI club for everyone, including beginners. Through engaging projects, you will build your own machine learning models.</p>
+</div>
+<div class="links_footer">
+        <div class="links_section">
+    <h2>Browse</h2>
+    <p>About Us</p>
+    <p>Practice</p>
+    <p>Blog</p>
+    <p>Resources</p>
+  </div>
+  <div class="links_section">
+          <h2>Socials</h2>
+          <p>Instagram</p>
+          <p>Facebook</p>
+          <p>Discord</p>
+          <p>X</p>
+        </div>
+  <div class="links_section">
+          <h2>Contact</h2>
+          <p>info@stuyai.com</p>
+          <p>Stuyvesant High School</p>
+          <p>345 Chambers St.</p>
+          <p>New York, NY</p>
+        </div>
+</div>
+    </div>
+    <div class="bottom_footer">
+      <div class="copyright">
+        &copy; 2023 stuyai. All rights reserved.
+      </div>
+      <div class="priv">
+        Privacy Policy
+      </div>
+    </div>
+  </footer>
+    <script>
+
+	function openMenu() {
+	console.log("opening menu");
+        // Define the event listener function
+        function preventScroll(event) {
+            event.preventDefault();
+          }
+
+        const mobileMenu = document.querySelector('.mobile_menu');
+        const mobileNav = document.querySelector('.mobile_nav');
+        const menuItems = document.querySelector('.menu_items');
+
+        if (mobileMenu.style.display === 'flex') {
+          mobileMenu.style.display = 'none';
+          mobileMenu.style.height = '0';
+          mobileMenu.style.backgroundColor = 'transparent';
+          mobileMenu.style.position = 'static';
+          menuItems.style.height = 'auto';
+
+          // Remove the event listener using the same function reference
+          mobileMenu.removeEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.removeEventListener("wheel", preventScroll, { passive: false });
+	  mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+          mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
+        } else {
+          mobileMenu.style.display = 'flex';
+          mobileMenu.style.height = '100vh';
+          mobileMenu.style.backgroundColor = '#e6e6e6';
+          mobileMenu.style.position = 'fixed';
+
+          windowHeight = window.innerHeight;
+          let mobileNavHeight = mobileNav.clientHeight;
+
+          menuItems.style.height = windowHeight - mobileNavHeight + 'px';
+
+          // Add the event listener using the same function reference
+          mobileMenu.addEventListener("wheel", preventScroll, { passive: false });
+          mobileNav.addEventListener("wheel", preventScroll, { passive: false });
+	  mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+	  mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
+        }
+      }
+
+	function stuyActivities() {
+                location.href = 'https://stuyactivities.org/stuyai'
+        }
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const width = window.innerWidth * 0.7;
+        const height = window.innerHeight * .5;
+
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        const scale = window.devicePixelRatio;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+
+        const numPolygons = 3;
+        const startingSides = [10, 8, 12]; // Starting sides for each polygon
+        const endingSides = 3;
+        const totalFrames = 60;
+        const frameDuration = 1000 / 60; // 60 frames per second
+
+        // Define the other canvases that will reflect what's happening on the main canvas
+        const c1 = document.getElementById('st1');
+        const c2 = document.getElementById('st2');
+        const c3 = document.getElementById('st3');
+        const c4 = document.getElementById('st4');
+        const c5 = document.getElementById('st5');
+        const c6 = document.getElementById('st6');
+
+        const otzar = document.getElementById('Otzar');
+        const elias = document.getElementById('Elias');
+        const theodore = document.getElementById('Theodore');
+        const junling = document.getElementById('Junling');
+
+        const ctx1 = c1.getContext('2d');
+        const ctx2 = c2.getContext('2d');
+        const ctx3 = c3.getContext('2d');
+        const ctx4 = c4.getContext('2d');
+        const ctx5 = c5.getContext('2d');
+        const ctx6 = c6.getContext('2d');
+
+        const ctxOtzar = otzar.getContext('2d');
+        const ctxElias = elias.getContext('2d');
+        const ctxTheodore = theodore.getContext('2d');
+        const ctxJunling = junling.getContext('2d');
+
+        c1.width = 40;
+        c1.height = 40;
+        c2.width = 40;
+        c2.height = 40;
+        c3.width = 40;
+        c3.height = 40;
+        c4.width = 40;
+        c4.height = 40;
+        c5.width = 40;
+        c5.height = 40;
+        c6.width = 40;
+        c6.height = 40;
+
+        if (window.innerWidth < 768) {
+          otzar.width = window.innerWidth * 0.8;
+          otzar.height = window.innerWidth * 0.8;
+          elias.width = window.innerWidth * 0.8;
+          elias.height = window.innerWidth * 0.8;
+          theodore.width = window.innerWidth * 0.8;
+          theodore.height = window.innerWidth * 0.8;
+          junling.width = window.innerWidth * 0.8;
+          junling.height = window.innerWidth * 0.8;
+        } else {
+          otzar.width = window.innerWidth * 0.4;
+          otzar.height = window.innerWidth * 0.4;
+          elias.width = window.innerWidth * 0.4;
+          elias.height = window.innerWidth * 0.4;
+          theodore.width = window.innerWidth * 0.4;
+          theodore.height = window.innerWidth * 0.4;
+          junling.width = window.innerWidth * 0.4;
+          junling.height = window.innerWidth * 0.4;
+        }
+
+        c1.style.width = 40 + "px";
+        c1.style.height = 40 + "px";
+        c2.style.width = 40 + "px";
+        c2.style.height = 40 + "px";
+        c3.style.width = 40 + "px";
+        c3.style.height = 40 + "px";
+        c4.style.width = 40 + "px";
+        c4.style.height = 40 + "px";
+        c5.style.width = 40 + "px";
+        c5.style.height = 40 + "px";
+        c6.style.width = 40 + "px";
+        c6.style.height = 40 + "px";
+
+        otzar.style.width = otzar.width + "px";
+        otzar.style.height = otzar.height + "px";
+        elias.style.width = elias.width + "px";
+        elias.style.height = elias.height + "px";
+        theodore.style.width = theodore.width + "px";
+        theodore.style.height = theodore.height + "px";
+        junling.style.width = junling.width + "px";
+        junling.style.height = junling.height + "px";
+
+        const ctxs1 = [ctx1, ctx4];
+        const ctxs2 = [ctx2, ctx5];
+        const ctxs3 = [ctx3, ctx6];
+
+        const polygons = [];
+
+        for (let i = 0; i < numPolygons; i++) {
+            polygons.push({
+                currentSides: startingSides[i],
+                currentVertices: generateVertices(startingSides[i]),
+                startX: (width / numPolygons) * i,
+                rotation: Math.random() * Math.PI * 2 // Random rotation in radians
+            });
+        }
+
+        function generateVertices(canvas, sides, rotation) {
+            const vertices = [];
+            const centerX = canvas.width / scale / 6; // Divide the canvas width by 6 to position polygons
+            const centerY = canvas.height / scale / 2;
+            const radius = canvas.width / scale / 7; // Remember, the canvas is scaled up by the device pixel ratio
+            for (let i = 0; i < sides; i++) {
+                const angle = rotation + (Math.PI * 2 * i) / sides;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                vertices.push({ x, y });
+            }
+            return vertices;
+        }
+
+        function generateVertices_Small(canvas, sides, rotation) {
+            const vertices = [];
+            const centerX = 10; // Divide the canvas width by 6 to position polygons
+            const centerY = 10;
+            const radius = 9; // Remember, the canvas is scaled up by the device pixel ratio
+            for (let i = 0; i < sides; i++) {
+                const angle = rotation + (Math.PI * 2 * i) / sides;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                vertices.push({ x, y });
+            }
+            return vertices;
+        }
+
+        function generateVertices_Large(canvas, sides, rotation) {
+            const vertices = [];
+            const centerX = canvas.width/ scale / 2; // Divide the canvas width by 6 to position polygons
+            const centerY = canvas.width/ scale / 2;
+            const radius = canvas.width/ scale / 2; // Remember, the canvas is scaled up by the device pixel ratio
+            for (let i = 0; i < sides; i++) {
+                const angle = rotation + (Math.PI * 2 * i) / sides;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                vertices.push({ x, y });
+            }
+            return vertices;
+        }
+
+        function drawPolygon(ctx, vertices, startX, fill, text, paragraph) {
+          ctx.beginPath();
+          ctx.moveTo(vertices[0].x + startX, vertices[0].y);
+          for (let i = 1; i < vertices.length; i++) {
+              ctx.lineTo(vertices[i].x + startX, vertices[i].y);
+          }
+          ctx.closePath();
+          ctx.fillStyle = fill;
+          ctx.strokeStyle = fill;
+          if (fill == 'white') {
+              ctx.fill();
+          }
+          ctx.stroke();
+
+          if (text !== "") {
+        // Calculate the midpoints of the polygon's edges
+        const midpoints = [];
+        for (let i = 0; i < vertices.length; i++) {
+            const nextVertex = vertices[(i + 1) % vertices.length];
+            const midX = (vertices[i].x + nextVertex.x) / 2;
+            const midY = (vertices[i].y + nextVertex.y) / 2;
+            const length = Math.sqrt((nextVertex.x - vertices[i].x) ** 2 + (nextVertex.y - vertices[i].y) ** 2);
+            midpoints.push({ x: midX, y: midY, length });
+        }
+
+        // Calculate the weighted center based on midpoints and their lengths
+        let weightedCenterX = 0;
+        let weightedCenterY = 0;
+        let totalWeight = 0;
+        for (const midpoint of midpoints) {
+            weightedCenterX += midpoint.x * midpoint.length;
+            weightedCenterY += midpoint.y * midpoint.length;
+            totalWeight += midpoint.length;
+        }
+        weightedCenterX /= totalWeight;
+        weightedCenterY /= totalWeight;
+
+        ctx.font = '16px Oxygen Mono';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'black'; // Set text color
+
+        // Draw the text at the weighted center
+        ctx.fillText(text, weightedCenterX + startX, weightedCenterY);
+
+        // Split the paragraph into words
+const words = paragraph.split(' ');
+/*
+// Set up variables for text rendering
+const fontSize = 5;
+const lineHeight = fontSize * 1.5; // Adjust as needed
+const maxWidth = Math.min(canvas.width, canvas.height) / 2; // Maximum width for wrapping
+
+// Start rendering at the weighted center
+let x = weightedCenterX + startX;
+let y = weightedCenterY + 20;
+
+ctx.font = `${fontSize}px Oxygen Mono`;
+ctx.fillStyle = 'black'; // Set text color
+
+for (const word of words) {
+    const textWidth = ctx.measureText(word).width;
+
+    // Check if the word fits within the maximum width
+    if (x + textWidth <= weightedCenterX + startX + maxWidth) {
+        ctx.fillText(word, x, y);
+        x += textWidth + 4; // Add some spacing between words
+    } else {
+        // Move to the next line
+        x = weightedCenterX;
+        y += lineHeight;
+
+        // Check again if the word fits
+        if (x + textWidth <= weightedCenterX + startX + maxWidth) {
+            ctx.fillText(word, x, y);
+            x += textWidth + 4; // Add some spacing between words
+        }
+    }
+}
+*/
+    }
+      }
+
+
+        function animate() {
+            for (let i = 0; i < numPolygons; i++) {
+                if (polygons[i].currentSides > endingSides) {
+                    polygons[i].currentSides -= 1 / totalFrames;
+
+                    polygons[i].currentVertices = generateVertices(canvas, polygons[i].currentSides, polygons[i].rotation);
+
+                    if (i == 0) {
+                      smallVertices = generateVertices_Small(c1, polygons[i].currentSides, polygons[i].rotation);
+
+                      largeVertices = generateVertices_Large(otzar, polygons[i].currentSides, polygons[i].rotation);
+                    } else if (i == 1) {
+                      smallVertices = generateVertices_Small(c2, polygons[i].currentSides, polygons[i].rotation);
+
+                      largeVertices = generateVertices_Large(theodore, polygons[i].currentSides, polygons[i].rotation);
+                    } else if (i == 2) {
+                      smallVertices = generateVertices_Small(c3, polygons[i].currentSides, polygons[i].rotation);
+
+                      largeVertices = generateVertices_Large(junling, polygons[i].currentSides, polygons[i].rotation);
+                    }
+
+                    ctx.clearRect(polygons[i].startX, 0, width / numPolygons, height);
+
+                    drawPolygon(ctx, polygons[i].currentVertices, polygons[i].startX, "black", "");
+
+                    if (i == 0) {
+                      ctx1.clearRect(0, 0, 40, 40);
+                      ctx4.clearRect(0, 0, 40, 40);
+                      ctxOtzar.clearRect(0, 0, otzar.width, otzar.height);
+                      ctxElias.clearRect(0, 0, elias.width, elias.height);
+                      drawPolygon(ctx1, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctx4, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctxOtzar, largeVertices, 0, "black", "Otzar", `Hi! I work at an AI company. I love guitar.`);
+                      drawPolygon(ctxElias, largeVertices, 0, "black", "Elias", "");
+                    } else if (i == 1) {
+                      ctx2.clearRect(0, 0, 40, 40);
+                      ctx5.clearRect(0, 0, 40, 40);
+                      ctxTheodore.clearRect(0, 0, theodore.width, theodore.height);
+                      drawPolygon(ctx2, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctx5, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctxTheodore, largeVertices, 0, "black", "Theodore", "");
+                    } else if (i == 2) {
+                      ctx3.clearRect(0, 0, 40, 40);
+                      ctx6.clearRect(0, 0, 40, 40);
+                      ctxJunling.clearRect(0, 0, junling.width, junling.height);
+                      drawPolygon(ctx3, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctx6, smallVertices, 0, "white", "", "");
+                      drawPolygon(ctxJunling, largeVertices, 0, "black", "Junling", "");
+                    }
+                }
+            }
+            setTimeout(animate, frameDuration);
+        }
+
+        ctx.scale(scale, scale);
+        ctx1.scale(scale, scale);
+        ctx2.scale(scale, scale);
+        ctx3.scale(scale, scale);
+        ctx4.scale(scale, scale);
+        ctx5.scale(scale, scale);
+        ctx6.scale(scale, scale);
+
+        ctxOtzar.scale(scale, scale);
+        ctxElias.scale(scale, scale);
+        ctxTheodore.scale(scale, scale);
+        ctxJunling.scale(scale, scale);
+        animate();
+
+        function smoothScroll(e) {
+            const mobileMenu = document.querySelector('.mobile_menu');
+            if (mobileMenu.style.display === 'flex') {
+                openMenu();
+            }
+
+            e.preventDefault();
+
+            const targetId = e.currentTarget.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            const offsetTop = targetSection.offsetTop - 100;
+
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+
+        // Get the specific link elements by their class
+        const smoothScrollLinks = document.querySelectorAll('.toWaitlist');
+
+        // Attach the smoothScroll function to the click event of each link
+        smoothScrollLinks.forEach(link => {
+            link.addEventListener('click', smoothScroll);
+        });
+
+
+    </script>
+</body>
+</html>
