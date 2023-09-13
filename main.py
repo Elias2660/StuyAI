@@ -84,6 +84,7 @@ def update_files_and_restart():
 
         return {"message": "Files updated and FastAPI app restarted", "status_code": 200}
     except Exception as e:
+        # If there is an exception, return a status code of 500
         print("failed")
         return {"message": str(e), "status_code": 500}
 
