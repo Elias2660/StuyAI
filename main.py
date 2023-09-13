@@ -58,8 +58,9 @@ def load_csv_data():
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# Define a secret key for your webhook (used for validation)
-WEBHOOK_SECRET = "fjklsiwojegs4t389hwUGNyuiow4*)JOIWY$UGJNLRsjkgdasf"
+# Read the webhook secret from a file
+with open("webhook_secret.txt", "r") as secret_file:
+    WEBHOOK_SECRET = secret_file.read().strip()
 
 # Define a function to update files and restart your FastAPI app
 def update_files_and_restart():
