@@ -1,7 +1,7 @@
 import re
 import subprocess
 import os
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
@@ -58,6 +58,39 @@ def load_csv_data():
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+# Define a secret key for your webhook (used for validation)
+WEBHOOK_SECRET = "fjklsiwojegs4t389hwUGNyuiow4*)JOIWY$UGJNLRsjkgdasf"
+
+# Define a function to update files and restart your FastAPI app
+def update_files_and_restart():
+    # Add your logic here to update files
+    # For example, you can use Git to pull the latest changes from your repository
+
+    # Restart your FastAPI app
+    # Consider using a proper process manager or deployment strategy here
+    # This is a simplified example
+    uvicorn_process = Popen(["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"])
+    uvicorn_process.wait()
+
+@app.post("/webhook")
+async def github_webhook(request: Request):
+    # Verify the webhook secret (replace with your actual secret)
+    secret_key = request.headers.get("X-Hub-Signature")
+    if secret_key != WEBHOOK_SECRET:
+        return {"message": "Invalid secret", "status_code": 403}
+
+    # Parse the JSON payload
+    payload = await request.json()
+
+    # Handle different GitHub webhook events as needed
+    event_type = request.headers.get("X-GitHub-Event")
+    if event_type == "push":
+        # Handle push event (e.g., update files and restart)
+        update_files_and_restart()
+        return {"message": "Webhook processed", "status_code": 200}
+    
+    # Handle other event types as needed
+    return {"message": "Webhook not processed", "status_code": 200}
 
 @app.get("/blog")
 async def read_blog(request: Request):
