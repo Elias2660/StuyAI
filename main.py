@@ -62,16 +62,30 @@ async def read_root(request: Request):
 with open("webhook_secret.txt", "r") as secret_file:
     WEBHOOK_SECRET = secret_file.read().strip()
 
-# Define a function to update files and restart your FastAPI app
-def update_files_and_restart():
-    # Add your logic here to update files
-    # For example, you can use Git to pull the latest changes from your repository
+from subprocess import Popen, PIPE
 
-    # Restart your FastAPI app
-    # Consider using a proper process manager or deployment strategy here
-    # This is a simplified example
-    uvicorn_process = Popen(["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"])
-    uvicorn_process.wait()
+# Define a function to update files from the GitHub repository and restart your FastAPI app
+def update_files_and_restart():
+    try:
+        # Change the working directory to your project's home directory
+        os.chdir("/root/website")
+
+        # Use Git to pull the latest changes from the main branch
+        git_pull = Popen(["git", "pull", "origin", "main"], stdout=PIPE, stderr=PIPE)
+        stdout, stderr = git_pull.communicate()
+
+        if git_pull.returncode != 0:
+            print("failed")
+            return {"message": f"Git pull failed: {stderr.decode('utf-8')}", "status_code": 500}
+
+        # Restart your FastAPI app
+        uvicorn_process = Popen(["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"])
+        uvicorn_process.wait()
+
+        return {"message": "Files updated and FastAPI app restarted", "status_code": 200}
+    except Exception as e:
+        print("failed")
+        return {"message": str(e), "status_code": 500}
 
 @app.post("/webhook")
 async def github_webhook(request: Request):
