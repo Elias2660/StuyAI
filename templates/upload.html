@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload</title>	
+	<link rel="stylesheet" href="/static/index.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+	<h1>Doorway Detection</h1>
+<form id="uploadForm">
+    <input type="file" id="imageInput" name="file" accept="image/*">
+    <button type="submit">Upload Image</button>
+</form>
+
+<img id="resultImage" style="max-width: 500px; display: none;"/>
+
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    const imageInput = document.getElementById('imageInput');
+    formData.append("file", imageInput.files[0]);
+
+    fetch('/upload/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const imageUrl = URL.createObjectURL(blob);
+        const resultImage = document.getElementById('resultImage');
+        resultImage.src = imageUrl;
+        resultImage.style.display = 'block';
+    })
+    .catch(err => console.error(err));
+});
+</script>
+
+</body>
+</html>
+

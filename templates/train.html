@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload with Annotations</title>
+    <link rel="stylesheet" href="/static/train.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Train the doorway model</h1>
+    <h2>Take images with one door in the image. Click the image to plot the upper left corner, then click again to plot the bottom right corner. The name field is optional. Thank you!</h2>
+    <input type="file" id="imageUpload" accept="image/*">
+    <canvas id="canvas"></canvas>
+    <br>
+    <input type="text" id="name" placeholder="Name">
+    <select id="status">
+	<option value="closed">Closed</option>
+        <option value="open">Open</option>
+    </select>
+    <br>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="uploadToServer()">Upload to Server</button>
+
+    <script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let img = new Image();
+let points = [];
+
+document.getElementById('imageUpload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(evt) {
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            drawImageAndAnnotations();
+        }
+        img.src = evt.target.result;
+    }
+    reader.readAsDataURL(file);
+});
+
+canvas.addEventListener('click', handleCanvasInteraction);
+canvas.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const rect = canvas.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    handleCanvasInteraction({ offsetX: x, offsetY: y });
+});
+
+function drawImageAndAnnotations() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+
+    // Set the line width
+    ctx.lineWidth = 4;
+
+    points.forEach(point => {
+        ctx.beginPath();
+        // Increase the radius of the arc to make it more visible
+        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.closePath();
+    });
+
+    if (points.length === 2) {
+        ctx.beginPath();
+        ctx.rect(points[0].x, points[0].y, points[1].x - points[0].x, points[1].y - points[0].y);
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+        ctx.closePath();
+    }
+}
+
+
+function handleCanvasInteraction(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.offsetX || e.clientX - rect.left) * scaleX;
+    const y = (e.offsetY || e.clientY - rect.top) * scaleY;
+
+    if (points.length < 2) {
+        points.push({ x: x, y: y });
+        drawImageAndAnnotations();
+    }
+}
+
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    points = [];
+}
+
+function uploadToServer() {
+    if (points.length !== 2) {
+        alert("Please select two points on the image.");
+        return;
+    }
+
+    canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('image', blob);
+        formData.append('name', document.getElementById('name').value);
+        formData.append('status', document.getElementById('status').value);
+        formData.append('timestamp', Date.now() / 1000);  // Equivalent to time.time() in Python
+
+        // Add the coordinates of the two points to the formData
+        formData.append('point1_x', points[0].x);
+        formData.append('point1_y', points[0].y);
+        formData.append('point2_x', points[1].x);
+        formData.append('point2_y', points[1].y);
+
+        fetch('/train', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.text()).then(result => {
+            alert('Success:', result);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    });
+}
+
+    </script>
+</body>
+</html>
+

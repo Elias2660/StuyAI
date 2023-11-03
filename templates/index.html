@@ -31,7 +31,7 @@
           <a href="/resources"><button>Resources</button></a>
         </div>
         <div id="menu_actions">
-          <a href=""><button>Login</button></a>
+          <a onclick="notReady()" href=""><button>Login</button></a>
           <a href="#waitlist"class="toWaitlist"><button>Join</button></a>
         </div>
       </div>
@@ -64,7 +64,7 @@
           </div>
         </div>
         <div id="action_buttons">
-          <a href="" id="login"><button>Login</button></a>
+          <a onclick="notReady()" href="" id="login"><button>Login</button></a>
           <a href="#waitlist" class="toWaitlist" id="join"><button>Join</button></a>
         </div>
       </div>
@@ -121,7 +121,7 @@
       <div class="topics">
         <div class="section_header">
           <h2>We discuss a wide range of topics</h2>
-          <p>Almost every subset of artificial intelligence is its own field. And many of the subsets of those subset are their own field as well. We try to give our members a general overview of AI.</p>
+          <p>Almost every subset of artificial intelligence is its own field. And many of the subsets of those subsets are their own field as well. We will give our members a general overview of AI.</p>
         </div>
         <div class="learn_more">
           <a href="/about"><button type="button" name="button">learn more</button></a>
@@ -157,14 +157,14 @@
 	  </div>
 	  <div class="links_section">
             <h2>Socials</h2>
-            <p>Instagram</p>
-            <p>Facebook</p>
-            <p>Discord</p>
-            <p>X</p>
+	    <p class="outside"><a onclick="visitLink('https://www.instagram.com/stuyaiclub/')">Instagram</a></p>
+	    <p class="outside"><a onclick="visitLink('https://www.facebook.com/groups/829608282137271')">Facebook</a></p>
+	    <p class="outside"><a onclick="visitLink('https://discord.gg/Yn26NAEta8')">Discord</a></p>
+	    <p class="outside"><a onclick="visitLink('https://twitter.com/stuyaiclub')">X</a></p>
           </div>
 	  <div class="links_section">
             <h2>Contact</h2>
-            <p>info@stuyai.com</p>
+            <p>Email us on Stuy Activities</p>
             <p>Stuyvesant High School</p>
             <p>345 Chambers St.</p>
             <p>New York, NY</p>
@@ -181,6 +181,12 @@
       </div>
     </footer>
     <script>
+	    function notReady() {
+		alert("Feature coming soon!");
+	    }
+	    function visitLink(link) {
+		location.href = link;
+	    }
     $('#membershipForm').submit(function(event) {
         event.preventDefault();
 
@@ -230,6 +236,8 @@
           // Remove the event listener using the same function reference
           mobileMenu.removeEventListener("wheel", preventScroll, { passive: false });
           mobileNav.removeEventListener("wheel", preventScroll, { passive: false });
+		mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+          mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
         } else {
           mobileMenu.style.display = 'flex';
           mobileMenu.style.height = '100vh';
@@ -244,7 +252,10 @@
           // Add the event listener using the same function reference
           mobileMenu.addEventListener("wheel", preventScroll, { passive: false });
           mobileNav.addEventListener("wheel", preventScroll, { passive: false });
+		mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+          mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
         }
+
       }
 
 
@@ -526,10 +537,10 @@
     console.log(`The width is ${canvas.width}`)
   
     const stickFigures = [
-      { x: (canvas.width/scale) * 0.1, y: (canvas.height/scale) * 0.6, angle: 0 },   // Position the stick figures based on the canvas width and height
-      { x: (canvas.width/scale) * 0.3, y: (canvas.height/scale) * 0.6, angle: 0 },
-      { x: (canvas.width/scale) * 0.5, y: (canvas.height/scale) * 0.6, angle: 0 },
-      { x: (canvas.width/scale) * 0.7, y: (canvas.height/scale) * 0.6, angle: 0 }
+      { x: (canvas.width/scale) * 0.2, y: (canvas.height/scale) * 0.6, angle: 0 },   // Position the stick figures based on the canvas width and height
+      { x: (canvas.width/scale) * 0.4, y: (canvas.height/scale) * 0.6, angle: 0 },
+      { x: (canvas.width/scale) * 0.6, y: (canvas.height/scale) * 0.6, angle: 0 },
+      { x: (canvas.width/scale) * 0.8, y: (canvas.height/scale) * 0.6, angle: 0 }
     ];
   
     function drawStickFigure(x, y, angle) {

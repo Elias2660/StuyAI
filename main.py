@@ -7,8 +7,19 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import JSONResponse
 import csv
 from pydantic import BaseModel
+from fastapi import FastAPI, File, UploadFile
+from PIL import Image
+import numpy as np
+from io import BytesIO
+from starlette.responses import FileResponse
+import torch
+import shutil
 
 app = FastAPI()
+
+# Load the model outside of the endpoint to avoid loading it multiple times
+model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best50.pt', trust_repo=True, force_reload=True)
+
 
 # Define a list of safe modules and functions
 SAFE_MODULES = ['math', 'random']
@@ -36,6 +47,11 @@ def load_csv_data():
             solution = row['Solution'].replace('\\n', '<br>').replace('\\t', '&emsp;')
             another_solution = row['Another Solution'].replace('\\n', '<br>').replace('\\t', '&emsp;')
             third_solution = row['Third Solution (optional)'].replace('\\n', '<br>').replace('\\t', '&emsp;')
+            
+            print(row["Solution"])
+            print(solution)
+            print(row["Another Solution"])
+            print(another_solution)
 
             lesson_data = {
                 'Problem': problem,
@@ -84,7 +100,6 @@ def update_files_and_restart():
 
         return {"message": "Files updated and FastAPI app restarted", "status_code": 200}
     except Exception as e:
-        # If there is an exception, return a status code of 500
         print("failed")
         return {"message": str(e), "status_code": 500}
 
@@ -92,6 +107,8 @@ def update_files_and_restart():
 async def github_webhook(request: Request):
     # Verify the webhook secret (replace with your actual secret)
     secret_key = request.headers.get("X-Hub-Signature")
+    print(WEBHOOK_SECRET)
+    print(secret_key)
     if secret_key != WEBHOOK_SECRET:
         return {"message": "Invalid secret", "status_code": 403}
 
@@ -158,6 +175,75 @@ async def authenticate_user(credentials: UserCredentials):
 @app.get("/privacy")
 async def privacy(request: Request):
     return templates.TemplateResponse("privacy.html", {"request": request})
+
+@app.get("/upload")
+async def privacy(request: Request):
+    return templates.TemplateResponse("upload.html", {"request": request})
+
+@app.post("/upload/")
+async def determine_brightness(file: UploadFile = File(...)):
+    contents = await file.read()
+    image = Image.open(BytesIO(contents))
+
+    # Resize image using PIL methods
+    img = image.resize((384, 384))
+
+    # Convert PIL image to numpy array for the model
+    img_array = np.array(img)
+
+    # Ensure the input is in the format the model expects
+    results = model([img_array])  # The model expects a batch of images
+
+    # Extract the PIL image with boxes and labels
+    pil_img = results.render()[0]  # results.render() returns a list of images
+    annotated_img = Image.fromarray(pil_img)
+
+    # Save the annotated image
+    annotated_img.save('result.jpg')
+
+    return FileResponse('result.jpg', media_type='image/jpeg')
+
+@app.get("/train")
+async def privacy(request: Request):
+    return templates.TemplateResponse("train.html", {"request": request})
+
+@app.post("/train")
+async def upload_data(
+    image: UploadFile = Form(...),
+    name: str = Form(...),
+    status: str = Form(...),
+    timestamp: str = Form(...),
+    point1_x: str = Form(...),
+    point1_y: str = Form(...),
+    point2_x: str = Form(...),
+    point2_y: str = Form(...)
+):
+    # Directories
+    BASE_DIR = "user_collected"
+    IMAGE_DIR = f"{BASE_DIR}/images"
+    LABEL_DIR = f"{BASE_DIR}/labels"
+    directory_path = "./user_collected/images"
+    extension = "jpg"
+    number_of_files = len([f for f in os.listdir(directory_path) if f.endswith(extension) and os.path.isfile(os.path.join(directory_path, f))])
+
+    # Save the uploaded image
+    img_path = f"{IMAGE_DIR}/img_{number_of_files}.jpg"
+    with open(img_path, "wb") as buffer:
+        buffer.write(image.file.read())
+
+    # Convert non-jpg images to jpg
+    img_format = Image.open(img_path).format
+    if img_format != "JPEG":
+        image_obj = Image.open(img_path)
+        rgb_im = image_obj.convert('RGB')
+        rgb_im.save(img_path, "JPEG")
+
+    # Save label data
+    label_data = f"{timestamp} {status} {name} {point1_x} {point1_y} {point2_x} {point2_y}\n"
+    with open(f"{LABEL_DIR}/{number_of_files}.txt", "w") as label_file:
+        label_file.write(label_data)
+
+    return {"status": "success", "message": "Data uploaded successfully"}
 
 @app.post("/test")
 async def test_post(request: Request):
