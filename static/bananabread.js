@@ -17,7 +17,7 @@ function authenticateUser(event) {
             const responseText = xhr.responseText;
             alert(responseText); // Display the response
 	    
-		const bananabreads = document.
+		const bananabreads = document.querySelectorAll(".bananabreads");
         }
     };
 
