@@ -28,7 +28,7 @@
         <a href="/resources"><button>Resources</button></a>
       </div>
       <div id="menu_actions">
-        <a href=""><button>Login</button></a>
+        <a onclick="notReady()" href=""><button>Login</button></a>
         <a onclick="stuyActivities()"><button>Join</button></a>
       </div>
     </div>
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div id="action_buttons">
-        <a href="" id="login"><button>Login</button></a>
+        <a onclick="notReady()" href="" id="login"><button>Login</button></a>
         <a onclick="stuyActivities()" id="join"><button>Join</button></a>
       </div>
     </div>
@@ -80,7 +80,9 @@
       </div>
     </div>
     <script>
-
+	function notReady() {
+                alert("Feature coming soon!");
+            }
 	function stuyActivities() {
                 location.href = 'https://stuyactivities.org/stuyai'
         }

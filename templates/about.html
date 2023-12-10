@@ -28,7 +28,7 @@
         <a href="/resources"><button>Resources</button></a>
       </div>
       <div id="menu_actions">
-        <a href=""><button>Login</button></a>
+        <a onclick="notReady()" href=""><button>Login</button></a>
         <a onclick="stuyActivities()"><button>Join</button></a>
       </div>
     </div>
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div id="action_buttons">
-        <a href="" id="login"><button>Login</button></a>
+        <a onclick="notReady()" href="" id="login"><button>Login</button></a>
         <a onclick="stuyActivities()" id="join"><button>Join</button></a>
       </div>
     </div>
@@ -171,29 +171,29 @@
   <p>We are an AI club for everyone, including beginners. Through engaging projects, you will build your own machine learning models.</p>
 </div>
 <div class="links_footer">
-        <div class="links_section">
-    <h2>Browse</h2>
-    <p>About Us</p>
-    <p>Practice</p>
-    <p>Blog</p>
-    <p>Resources</p>
-  </div>
-  <div class="links_section">
-          <h2>Socials</h2>
-          <p>Instagram</p>
-          <p>Facebook</p>
-          <p>Discord</p>
-          <p>X</p>
+          <div class="links_section">
+            <h2>Browse</h2>
+            <p><a href="/about">About Us</a></p>
+            <p><a href="/practice">Practice</a></p>
+            <p><a href="/blog">Blog</a></p>
+            <p><a href="/resources">Resources</a></p>
+          </div>
+          <div class="links_section">
+            <h2>Socials</h2>
+            <p class="outside"><a onclick="visitLink('https://www.instagram.com/stuyaiclub/')">Instagram</a></p>
+            <p class="outside"><a onclick="visitLink('https://www.facebook.com/groups/829608282137271')">Facebook</a></p>
+            <p class="outside"><a onclick="visitLink('https://discord.gg/Yn26NAEta8')">Discord</a></p>
+            <p class="outside"><a onclick="visitLink('https://twitter.com/stuyaiclub')">X</a></p>
+          </div>
+          <div class="links_section">
+            <h2>Contact</h2>
+            <p>Email us on Stuy Activities</p>
+            <p>Stuyvesant High School</p>
+            <p>345 Chambers St.</p>
+            <p>New York, NY</p>
+          </div>
         </div>
-  <div class="links_section">
-          <h2>Contact</h2>
-          <p>info@stuyai.com</p>
-          <p>Stuyvesant High School</p>
-          <p>345 Chambers St.</p>
-          <p>New York, NY</p>
-        </div>
-</div>
-    </div>
+      </div>
     <div class="bottom_footer">
       <div class="copyright">
         &copy; 2023 stuyai. All rights reserved.
@@ -204,9 +204,14 @@
     </div>
   </footer>
     <script>
+	    function notReady() {
+                alert("Feature coming soon!");
+            }
+	function visitLink(link) {
+                location.href = link;
+            }
 
-	function openMenu() {
-	console.log("opening menu");
+	    function openMenu() {
         // Define the event listener function
         function preventScroll(event) {
             event.preventDefault();
@@ -215,25 +220,26 @@
         const mobileMenu = document.querySelector('.mobile_menu');
         const mobileNav = document.querySelector('.mobile_nav');
         const menuItems = document.querySelector('.menu_items');
-
+	const title = document.querySelector('.title');
         if (mobileMenu.style.display === 'flex') {
           mobileMenu.style.display = 'none';
           mobileMenu.style.height = '0';
           mobileMenu.style.backgroundColor = 'transparent';
           mobileMenu.style.position = 'static';
           menuItems.style.height = 'auto';
+	  title.style.display = 'flex';
 
           // Remove the event listener using the same function reference
           mobileMenu.removeEventListener("wheel", preventScroll, { passive: false });
           mobileNav.removeEventListener("wheel", preventScroll, { passive: false });
-	  mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+                mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
           mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
         } else {
           mobileMenu.style.display = 'flex';
           mobileMenu.style.height = '100vh';
           mobileMenu.style.backgroundColor = '#e6e6e6';
           mobileMenu.style.position = 'fixed';
-
+	  title.style.display = 'none';
           windowHeight = window.innerHeight;
           let mobileNavHeight = mobileNav.clientHeight;
 
@@ -242,10 +248,12 @@
           // Add the event listener using the same function reference
           mobileMenu.addEventListener("wheel", preventScroll, { passive: false });
           mobileNav.addEventListener("wheel", preventScroll, { passive: false });
-	  mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
-	  mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
+                mobileMenu.addEventListener("touchmove", preventScroll, { passive: false });
+          mobileNav.addEventListener("touchmove", preventScroll, { passive: false });
         }
+
       }
+
 
 	function stuyActivities() {
                 location.href = 'https://stuyactivities.org/stuyai'

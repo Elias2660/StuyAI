@@ -28,7 +28,7 @@
         <a href="/resources"><button>Resources</button></a>
       </div>
       <div id="menu_actions">
-        <a href=""><button>Login</button></a>
+        <a onclick="notReady()" href=""><button>Login</button></a>
         <a onclick="stuyActivities()"><button>Join</button></a>
       </div>
     </div>
@@ -61,26 +61,44 @@
         </div>
       </div>
       <div id="action_buttons">
-        <a href="" id="login"><button>Login</button></a>
+        <a onclick="notReady()" href="" id="login"><button>Login</button></a>
         <a onclick="stuyActivities()" id="join"><button>Join</button></a>
       </div>
     </div>
   </nav>
       <article class="title"><h1>Resources</h1></article>
-      <div class="login-box">
-        <div class="login-container">
-          <h2>Login</h2>
-          <form class="login-form" action="#">
-              <label for="username">Username</label>
-              <input type="text" id="username" name="username" required>
-              <label for="password">Password</label>
-              <input type="password" id="password" name="password" required>
-              <button type="submit" onclick="alert('incorrect login info');">Login</button>
-          </form>
-      </div>
-    </div>
-    <script>
+      <div class="links">
+      <h2>Machine Learning Basics</h2>
+    <ul>
+        <li><a href="https://www.freecodecamp.org/news/machine-learning-fundamentals-handbook-key-concepts-algorithms-and-python-code-examples/">FreeCodeCamp's Machine Learning Fundamentals</a></li>
+        <li><a href="https://machinelearningmastery.com/start-here/">Machine Learning Mastery's Guide</a></li>
+    </ul>
 
+    <h2>Understanding ML Algorithms</h2>
+    <ul>
+        <li><a href="https://www.khanacademy.org/computer-programming/machine-learning-algorithms/6357005604995072">Khan Academy's Machine Learning Algorithms</a></li>
+        <li><a href="https://www.analyticsvidhya.com/blog/2021/04/machine-learning-tutorial-for-beginners/">Analytics Vidhya on Types of ML</a></li>
+    </ul>
+
+    <h2>Deep Learning and Neural Networks</h2>
+    <ul>
+        <li><a href="https://howtolearnmachinelearning.com/deep-learning-tutorials/">How to Learn Machine Learning's ANN Series</a></li>
+        <li><a href="https://www.deeplearningbook.org/">Deep Learning Book</a></li>
+    </ul>
+
+    <h2>TensorFlow Syntax and Usage</h2>
+    <ul>
+        <li><a href="https://www.tensorflow.org/overview/">TensorFlow's Introduction</a></li>
+        <li><a href="https://www.dataquest.io/blog/tensorflow-tutorial/">DataQuest TensorFlow Tutorial</a></li>
+        <li><a href="https://www.analyticsvidhya.com/blog/2021/08/tensorflow-for-beginners-with-examples-and-python-implementation/">Analytics Vidhya TensorFlow for Beginners</a></li>
+        <li><a href="https://www.freecodecamp.org/news/how-to-use-tensorflow-for-deep-learning-basics-for-beginners/">FreeCodeCamp TensorFlow Basics</a></li>
+        <li><a href="https://www.analyticsvidhya.com/blog/2021/08/tensorflow-2-0-tutorial-deep-learning-with-tensorflow-2-0/">TensorFlow 2.0 Tutorial by Analytics Vidhya</a></li>
+        <li><a href="https://www.simplilearn.com/tensorflow-tutorial-for-beginners-article">Simplilearn TensorFlow Tutorial</a></li>
+    </ul></div>
+    <script>
+	function notReady() {
+                alert("Feature coming soon!");
+            }
 	    function stuyActivities() {
                 location.href = 'https://stuyactivities.org/stuyai'
         }

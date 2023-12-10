@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Annotation for ML Training</title>
+    <link rel="stylesheet" href="/static/train.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Train the Doorway Model</h1>
+    <h2>Click the image to plot the upper left corner, then click again to plot the bottom right corner. Thank you!</h2>
+    <canvas id="canvas"></canvas>
+    <br>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="uploadToServer()">Upload to Server</button>
+
+<script>
+    let currentImageIndex = 0;
+    let imageList = []; // List of images to be annotated
+    let annotations = []; // Array of annotations, each containing two points
+    let currentPoints = []; // Temporary storage for the current annotation points
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let img = new Image();
+
+    fetch('/getImageList').then(response => response.json())
+        .then(data => {
+            imageList = data.images;
+            loadImage();
+        });
+
+    function loadImage() {
+        clearCanvasCompletely();
+        if (currentImageIndex >= imageList.length) {
+            alert("All images annotated");
+            return;
+        }
+        img.onload = function() {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            drawImageAndAnnotations();
+        }
+        img.src = '/static/door_raw_data/' + imageList[currentImageIndex];
+    }
+
+    canvas.addEventListener('click', handleCanvasInteraction);
+
+    function drawImageAndAnnotations() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        ctx.lineWidth = 4;
+        annotations.forEach(ann => {
+            ctx.beginPath();
+            ctx.rect(ann[0].x, ann[0].y, ann[1].x - ann[0].x, ann[1].y - ann[0].y);
+            ctx.strokeStyle = 'red';
+            ctx.stroke();
+            ctx.closePath();
+        });
+
+        // Draw current points
+        currentPoints.forEach(point => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+        });
+    }
+
+    function handleCanvasInteraction(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.offsetX || e.clientX - rect.left) * scaleX;
+        const y = (e.offsetY || e.clientY - rect.top) * scaleY;
+
+        currentPoints.push({ x: x, y: y });
+        if (currentPoints.length === 2) {
+            annotations.push([...currentPoints]);
+            currentPoints = [];
+        }
+        drawImageAndAnnotations();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        annotations = [];
+        currentPoints = [];
+    }
+
+    function clearCanvasCompletely() {
+        img.src = '';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        annotations = [];
+        currentPoints = [];
+    }
+
+    function uploadToServer() {
+        const formData = new FormData();
+        formData.append('file_name', imageList[currentImageIndex]);
+        formData.append('annotations', JSON.stringify(annotations));
+
+        fetch('/train', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json()).then(result => {
+            clearCanvasCompletely();
+            currentImageIndex++;
+            loadImage();
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.keyCode === 13) {  // 13 is the key code for Enter
+            uploadToServer();
+        }
+    });
+</script>
+
+
+</body>
+</html>
+

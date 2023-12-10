@@ -28,7 +28,7 @@
         <a href="/resources"><button>Resources</button></a>
       </div>
       <div id="menu_actions">
-        <a href=""><button>Login</button></a>
+        <a onclick="notReady()"><button>Login</button></a>
         <a onclick="stuyActivities()"><button>Join</button></a>
       </div>
     </div>
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div id="action_buttons">
-        <a href="" id="login"><button>Login</button></a>
+        <a onclick="notReady()" href="" id="login"><button>Login</button></a>
         <a onclick="stuyActivities()" id="join"><button>Join</button></a>
       </div>
     </div>
@@ -75,7 +75,7 @@
               <input type="text" id="username" name="username" required>
               <label for="password">Password</label>
               <input type="password" id="password" name="password" required>
-              <button type="submit" onclick="alert('incorrect login info');">Login</button>
+              <button type="submit" onclick="login()">Login</button>
           </form>
       </div>
     </div>
@@ -109,6 +109,12 @@
     </div>
     {% endfor %}
     <script>
+	     function stuyActivities() {
+                location.href = 'https://stuyactivities.org/stuyai'
+        }
+	    function notReady() {
+                alert("Feature coming soon!");
+            }
       function openMenu() {
         // Define the event listener function
         function preventScroll(event) {

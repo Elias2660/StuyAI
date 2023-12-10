@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NLP Model Training</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 50%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form for creating the model -->
+        <form id="nlpForm">
+            <label for="fileInput">Upload CSV File:</label>
+            <input type="file" id="fileInput" accept=".csv">
+	    <button onclick="downloadFile()">Example Dataset</button>
+            <label for="textInput">Or paste CSV content here:</label>
+            <textarea id="textInput" placeholder="Enter CSV data"></textarea>
+            <button type="submit">Create Model</button>
+        </form>
+        <div class="response" id="responseContainer"></div>
+
+        <!-- Form for running the model -->
+        <form id="runNlpForm">
+            <label for="modelIdInput">Model ID (XTE7ba is the id of a model trained on 30k tweets):</label>
+            <input type="text" id="modelIdInput" placeholder="Enter Model ID">
+            <label for="commentInput">Comment to Analyze:</label>
+            <textarea id="commentInput" placeholder="Enter your comment"></textarea>
+            <button type="submit">Run Model</button>
+        </form>
+        <div class="prediction" id="predictionContainer"></div>
+    </div>
+
+    <script>
+        document.getElementById('nlpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const textInput = document.getElementById('textInput');
+            const formData = new FormData();
+
+            if (fileInput.files[0]) {
+                formData.append('file', fileInput.files[0]);
+            } else if (textInput.value) {
+                formData.append('text', textInput.value);
+            } else {
+                alert('Please upload a CSV file or enter CSV text.');
+                return;
+            }
+
+            try {
+		alert('Sending model creation request. This will take anywhere from 30 seconds to 90 seconds.');
+                const response = await fetch('/models/nlp', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+		const report = "Scores  " + data.report.replace(/macro avg/g, 'macro_avg').replace(/weighted avg/g, 'weighted_avg');
+                const formattedReport = formatReportAsTable(report);
+                document.getElementById('responseContainer').innerHTML = 'Model ID: ' + data.message + '<br>' + formattedReport;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        document.getElementById('runNlpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const modelIdInput = document.getElementById('modelIdInput');
+            const commentInput = document.getElementById('commentInput');
+            const formData = new FormData();
+
+            formData.append('modelName', modelIdInput.value);
+            formData.append('new_comment', commentInput.value);
+
+            try {
+                const response = await fetch('/models/run_nlp', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                document.getElementById('predictionContainer').textContent = 'Prediction: ' + data.prediction + ', Processed Comment: ' + data.processed_comment;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+	function formatReportAsTable(report) {
+	    const lines = report.split('\n');
+	    let table = '<table border="0">';
+
+	    for (let i = 0; i < lines.length; i++) {
+        	if (lines[i].trim() === '') continue; // Skip empty lines
+        	const cells = lines[i].split(/\s+/).filter(cell => cell !== '');
+        	table += '<tr>';
+        	cells.forEach((cell, index) => {
+            	     // Use 'th' for the header row, 'td' for others
+            	     if (i === 0 || index === 0) {
+                	table += `<th>${cell}</th>`;
+            	     } else {
+                	table += `<td>${cell}</td>`;
+            	}
+        	});
+        	table += '</tr>';
+    	    }
+
+	    table += '</table>';
+	    return table;
+	}
+
+
+	function downloadFile() {
+            window.location.href = '/download/dataset.csv';
+        }
+    </script>
+</body>
+</html>
+

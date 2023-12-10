@@ -103,7 +103,19 @@ body {
     justify-content: center;
     font-family: 'Oxygen Mono', monospace;
   }
-  
+ 
+ .logo_box a {
+ 	text-decoration: none;
+ }
+
+ .menu_resources a {
+ 	text-decoration: none;
+ }
+
+ .nav_buttons a {
+ 	text-decoration: none;
+ }
+
   .logo_box h2 {
     padding-top: 20px;
     padding-left: 20px;
@@ -141,11 +153,10 @@ body {
     font-family: inherit;
   }
   
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
+ .links {
+   padding: 20px;
+ }
+
   .title {
     color: black;
     display: flex;

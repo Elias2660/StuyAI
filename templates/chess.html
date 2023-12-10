@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/chessboardjs-1.0.0/css/chessboard-1.0.0.min.css" />
+    <link rel="stylesheet" href="/static/index.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #myBoard {
+	    width: 400px;
+            max-width: 80vh;
+	    max-height: 50vh;
+        }
+	.box {
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    flex-direction: column;
+	}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Play against an AI bot</h1>
+        <div id="myBoard"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="/static/chessboardjs-1.0.0/js/chessboard-1.0.0.min.js"></script>
+    <script src="/static/game.js"></script>
+</body>
+</html>
+

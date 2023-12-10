@@ -27,7 +27,6 @@ nav {
   position: relative;
   margin: 0;
   flex-direction: column;
-  position: sticky;
 }
 
 .mobile_menu div {
@@ -65,7 +64,6 @@ nav {
   nav {
     display: none;
   }
-
   .mobile_menu {
     display: none;
     flex-direction: row;
@@ -79,7 +77,6 @@ nav {
   }
 
   .mobile_nav {
-    position: sticky;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -184,6 +181,10 @@ button {
   border: 0px solid white;
   padding: 15px;
   font-family: inherit;
+  cursor: pointer;
+}
+a {
+        cursor: pointer;
 }
 
 .title {
@@ -470,7 +471,7 @@ a {
   transform: rotate(90deg);
   }
 
-  .leaders div {flex-direction: column;}
+  .leaders div {flex-direction: column-reverse;}
 
   .topics {
 	  grid-template-columns: repeat(1, 1fr);

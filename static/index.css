@@ -149,7 +149,7 @@ button {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-top: 20px;
+  padding-top: 100px;
 }
 
 .mobile_menu {
@@ -215,6 +215,10 @@ button {
   flex-direction: column;
   justify-content: center;
   padding-left: 30px; 
+}
+
+.outside {
+  cursor: pointer;
 }
 
 #hero_text div {
@@ -560,4 +564,11 @@ a {
   .about_footer {
     max-width: 75vw;
   }
+  .title {
+    padding-top: 0px;
+  }
+}
+
+a {
+	cursor: pointer;
 }

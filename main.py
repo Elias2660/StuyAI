@@ -1,22 +1,70 @@
+import tempfile
 import re
 import subprocess
 import os
 from fastapi import FastAPI, Request, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import csv
 from pydantic import BaseModel
+from fastapi import FastAPI, File, UploadFile
+from PIL import Image
+import numpy as np
+from io import BytesIO
+from starlette.responses import FileResponse
+import torch
+import shutil
+import json
+import chess
+from io import StringIO
+from pydub import AudioSegment
 
 app = FastAPI()
 
+# Load the model outside of the endpoint to avoid loading it multiple times
+#model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best50.pt', trust_repo=True, force_reload=True)
+
 # Define a list of safe modules and functions
-SAFE_MODULES = ['math', 'random']
-SAFE_FUNCTIONS = ['print', 'len']
+#SAFE_MODULES = ['math', 'random']
+#SAFE_FUNCTIONS = ['print', 'len']
 
 # Set resource limits
-MEMORY_LIMIT = 256  # Memory limit in MB
-CPU_LIMIT = 5  # CPU time limit in seconds
+#MEMORY_LIMIT = 256  # Memory limit in MB
+#CPU_LIMIT = 5  # CPU time limit in seconds
+
+
+# NLP Stuff
+import pandas as pd
+import re
+import string
+import random
+import joblib
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+import nltk
+from sklearn.preprocessing import StandardScaler
+
+# Download necessary NLTK resources
+nltk.download('wordnet')
+nltk.download('punkt')
+
+# Text preprocessing function
+def preprocess_text(text):
+    # Normalize text to lowercase
+    print(text)
+    text = text.lower()
+    # Remove special characters and numbers
+    text = re.sub(r'[^a-z\s]', '', text)
+    # Tokenization and Lemmatization
+    lemmatizer = WordNetLemmatizer()
+    words = word_tokenize(text)
+    return ' '.join([lemmatizer.lemmatize(word) for word in words if len(word) > 2])
+
 
 # Mount the static files directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -36,6 +84,11 @@ def load_csv_data():
             solution = row['Solution'].replace('\\n', '<br>').replace('\\t', '&emsp;')
             another_solution = row['Another Solution'].replace('\\n', '<br>').replace('\\t', '&emsp;')
             third_solution = row['Third Solution (optional)'].replace('\\n', '<br>').replace('\\t', '&emsp;')
+            
+            print(row["Solution"])
+            print(solution)
+            print(row["Another Solution"])
+            print(another_solution)
 
             lesson_data = {
                 'Problem': problem,
@@ -91,6 +144,8 @@ def update_files_and_restart():
 async def github_webhook(request: Request):
     # Verify the webhook secret (replace with your actual secret)
     secret_key = request.headers.get("X-Hub-Signature")
+    print(WEBHOOK_SECRET)
+    print(secret_key)
     if secret_key != WEBHOOK_SECRET:
         return {"message": "Invalid secret", "status_code": 403}
 
@@ -157,6 +212,61 @@ async def authenticate_user(credentials: UserCredentials):
 @app.get("/privacy")
 async def privacy(request: Request):
     return templates.TemplateResponse("privacy.html", {"request": request})
+
+@app.get("/upload")
+async def privacy(request: Request):
+    return templates.TemplateResponse("upload.html", {"request": request})
+
+@app.post("/upload/")
+async def determine_brightness(file: UploadFile = File(...)):
+    contents = await file.read()
+    image = Image.open(BytesIO(contents))
+
+    # Resize image using PIL methods
+    img = image.resize((384, 384))
+
+    # Convert PIL image to numpy array for the model
+    img_array = np.array(img)
+
+    # Ensure the input is in the format the model expects
+    results = model([img_array])  # The model expects a batch of images
+
+    # Extract the PIL image with boxes and labels
+    pil_img = results.render()[0]  # results.render() returns a list of images
+    annotated_img = Image.fromarray(pil_img)
+
+    # Save the annotated image
+    annotated_img.save('result.jpg')
+
+    return FileResponse('result.jpg', media_type='image/jpeg')
+
+@app.get("/train")
+async def train(request: Request):
+    return templates.TemplateResponse("train.html", {"request": request})
+
+@app.get("/getImageList")
+async def get_image_list():
+    image_list = []
+    files = os.listdir("./static/door_raw_data/")
+    other_files = os.listdir("./static/annotations/")
+    print(len(other_files)/ len(files) * 100)
+    for file in files:
+        if (file[:-4] + ".txt") not in other_files:
+            image_list.append(file)
+    return {"images": image_list}
+
+@app.post("/train")
+async def upload_data(
+    file_name: str = Form(...),
+    annotations: str = Form(...)
+):
+    annotations_data = json.loads(annotations)
+    formatted_data = f"{file_name}\n"
+    for ann in annotations_data:
+        formatted_data += f"{round(ann[0]['x'])} {round(ann[0]['y'])} {round(ann[1]['x'])} {round(ann[1]['y'])}\n"
+    with open(f"static/annotations/{file_name[:-4]}.txt", "w") as label_file:
+        label_file.write(formatted_data)
+    return {"status": "success", "message": "Data uploaded successfully"}
 
 @app.post("/test")
 async def test_post(request: Request):
@@ -255,6 +365,367 @@ def execute_code(code):
 
     return result
 
+# This will be the code for the chess game (AI bot)
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from torch import nn
+from scipy import signal
+from scipy.io import wavfile
+
+ACTION_SPACE_SIZE = 4672
+
+# Define the piece values
+PIECE_VALUES = {'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 30}
+
+class SimplifiedChessCNN(nn.Module):
+    def __init__(self, action_size):
+        super(SimplifiedChessCNN, self).__init__()
+        
+        # Simplifying to fewer channels and layers
+        self.conv1 = nn.Conv2d(12, 16, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(32)
+
+        # Simplifying the fully connected layers
+        self.fc1 = nn.Linear(32 * 8 * 8, 256)
+        self.fc2 = nn.Linear(256, action_size)
+
+    def forward(self, x):
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        
+        x = x.view(x.size(0), -1)  # Flatten the tensor
+        
+        x = F.relu(self.fc1(x))
+        return self.fc2(x)
+
+# Function to encode a move into an integer
+def encode_move(move):
+    return move.from_square * 64 + move.to_square
+
+# Function to decode an integer back into a move
+def decode_move(encoded_move, legal_moves):
+    from_square = encoded_move // 64
+    to_square = encoded_move % 64
+    for move in legal_moves:
+        if move.from_square == from_square and move.to_square == to_square:
+            return move
+    return None
+
+# Function to encode the board state
+def encode_board(board):
+    # Define a mapping from pieces to channels
+    piece_to_channel = {
+        'P': 0, 'N': 1, 'B': 2, 'R': 3, 'Q': 4, 'K': 5,
+        'p': 6, 'n': 7, 'b': 8, 'r': 9, 'q': 10, 'k': 11
+    }
+
+    # Create a 12x8x8 numpy array to represent the board
+    board_array = np.zeros((12, 8, 8), dtype=np.float32)
+
+    for i in range(64):
+        piece = board.piece_at(i)
+        if piece:
+            channel = piece_to_channel[piece.symbol()]
+            board_array[channel, i // 8, i % 8] = 1  # Place the piece in the corresponding channel
+
+    return board_array
+
+# Load White's model
+model_white = SimplifiedChessCNN(ACTION_SPACE_SIZE)
+model_white.load_state_dict(torch.load('chess_model2025_5_black_2000.pth'))
+model_white.eval()
+
+# Load Black's model
+model_black = SimplifiedChessCNN(ACTION_SPACE_SIZE)
+model_black.load_state_dict(torch.load('chess_model2025_5_black_2000.pth'))
+model_black.eval()
+
+# Function to choose a move with the model
+def choose_move_with_model(board, model):
+    state = encode_board(board)
+    state_tensor = torch.tensor(state, dtype=torch.float32).unsqueeze(0)
+    with torch.no_grad():
+        q_values = model(state_tensor)
+
+    legal_moves = list(board.legal_moves)
+    best_move = None
+    best_q_value = -float('inf')
+
+    for move in legal_moves:
+        encoded_move = encode_move(move)
+        if encoded_move < ACTION_SPACE_SIZE:
+            q_value = q_values[0, encoded_move].item()
+            if q_value > best_q_value:
+                best_q_value = q_value
+                best_move = move
+
+    return best_move
+
+@app.get("/chess")
+async def train(request: Request):
+    return templates.TemplateResponse("chess.html", {"request": request})
+
+class ChessMove(BaseModel):
+    move: str
+    currentBoard: str
+
+@app.post("/make_move")
+async def make_move(chess_move: ChessMove):
+    # Extract move and current board state from the request
+    move = chess_move.move
+    current_board_fen = chess_move.currentBoard
+
+    print(move)
+    print(current_board_fen)
+
+    # Initialize a chess board with the current state
+    board = chess.Board(current_board_fen)
+
+    # Check if the move is a pawn promotion without specified promotion piece
+    if len(move) == 4 and board.piece_at(chess.parse_square(move[:2])).piece_type == chess.PAWN:
+        if move[1] == '7' and move[3] == '8':  # White pawn promotion
+            move += 'q'  # Promote to queen by default
+        elif move[1] == '2' and move[3] == '1':  # Black pawn promotion
+            move += 'q'  # Promote to queen by default
+
+    if board.is_game_over():
+        return {"new_board": "Checkmate"}
+
+    # Print the board to the console
+    print("Current Board:")
+    print(board)
+    print(board.legal_moves)
+
+    # Validate and execute the move
+    try:
+        move_obj = board.parse_san(move)
+        print("Parsed Move Object:", move_obj)
+        if move_obj not in board.legal_moves:
+            raise ValueError(f"Illegal move: {move}")
+        board.push(move_obj)
+    except Exception as e:
+        print("Error occurred:", e)
+        return JSONResponse(status_code=400, content={"message": str(e)})
+
+    if board.is_game_over():
+        return {"new_board": "Checkmate"}
+
+    # Computer makes its move
+    move = choose_move_with_model(board, model_black)
+    board.push(move)
+
+    if board.is_game_over():
+        return {"new_board": "Checkmate"}
+
+    # Return the new board position
+    return {"new_board": board.fen()}
+
+# NLP
+
+@app.get("/models/nlp")
+async def train(request: Request):
+    return templates.TemplateResponse("nlp_sent_model.html", {"request": request})
+
+@app.post("/models/nlp")
+async def nlp_sent(file: UploadFile = File(None), text: str = Form(None)):
+    # If a file is uploaded, use the file
+    if file:
+        contents = await file.read()
+        dataset = pd.read_csv(StringIO(contents.decode('utf-8')))
+    # If text is provided in the textbox, assume it's CSV formatted and convert it to a DataFrame
+    elif text:
+        dataset = pd.read_csv(StringIO(text))
+    else:
+        return {"error": "No input provided"}
+
+    # Apply text preprocessing to the first column of the dataset
+    dataset['Processed'] = dataset.iloc[:, 0].apply(preprocess_text)
+
+    # Splitting the dataset, assuming the first column is the text and the second column is the labels
+    X_train, X_test, y_train, y_test = train_test_split(
+        dataset['Processed'],   # Text column (preprocessed)
+        dataset.iloc[:, 1],     # Label column
+        test_size=0.2, 
+        random_state=42
+    )
+
+
+    # Feature extraction with TF-IDF
+    tfidf_vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, ngram_range=(1, 2))
+    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+    X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+    # Classifier - Logistic Regression with increased max_iter
+    model = LogisticRegression(max_iter=1500)
+
+    # Hyperparameter tuning using Grid Search
+    param_grid = {'C': [0.1, 1, 10]}
+    grid_search = GridSearchCV(model, param_grid, cv=5)
+    grid_search.fit(X_train_tfidf, y_train)
+
+    # Best model from grid search
+    best_model = grid_search.best_estimator_
+
+    # Evaluate the model
+    predictions = best_model.predict(X_test_tfidf)
+    evaluation_report = classification_report(y_test, predictions)
+
+    # Print the evaluation report
+    print(evaluation_report)
+
+    # Function to generate a random 6 character string
+    def generate_random_string(length=6):
+        letters_and_digits = string.ascii_letters + string.digits
+        return ''.join(random.choice(letters_and_digits) for i in range(length))
+
+    # Generate a random filename
+    filename = generate_random_string() + '.pkl'
+
+    # Save the best model to file
+    joblib.dump(best_model, "./nlp/" + filename)
+    joblib.dump(tfidf_vectorizer, f'./nlp/tfidf_vectorizer{filename}')
+
+    # Print the filename for confirmation
+    print("Model saved as:", filename)
+
+    return {"message": filename[:-4], "report": evaluation_report}
+
+@app.post("/models/run_nlp")
+async def run_nlp(modelName: str = Form(None), new_comment: str = Form(None)):
+    if not modelName or not new_comment:
+        raise HTTPException(status_code=400, detail="Model name and comment must be provided")
+
+    try:
+        # Load the model
+        model = joblib.load(f'./nlp/{modelName}.pkl')
+        print("found model")
+        # Load the vectorizer - ensure this is the same vectorizer used during training
+        tfidf_vectorizer = joblib.load(f'./nlp/tfidf_vectorizer{modelName}.pkl')
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Model or Vectorizer not found")
+
+    # Preprocess and vectorize the new comment
+    processed_comment = preprocess_text(new_comment)
+    vectorized_comment = tfidf_vectorizer.transform([processed_comment])
+
+    # Make a prediction
+    prediction = model.predict(vectorized_comment)
+
+    return {"prediction": prediction[0], "processed_comment": processed_comment}
+
+@app.get("/download/{file_name}")
+async def download_file(file_name: str):
+    file_path = f"{file_name}"
+    return FileResponse(path=file_path, filename=file_name)
+
+
+@app.get("/suno_ai")
+async def redirect_to_drive():
+    return RedirectResponse(url="https://drive.google.com/drive/folders/1fj0DgDX3gWYcq2zKYqIyUPUrldgshEcB?usp=drive_link")
+
+@app.get("/adobe_podcast")
+async def redirect_to_drive_folder():
+    return RedirectResponse(url="https://drive.google.com/drive/folders/17AAaVVL3O5cvIojCBpYwn2-t4tszhVrx?usp=sharing")
+
+@app.get("/hi_bye")
+async def drive_hi_bye():
+    return RedirectResponse(url="https://drive.google.com/drive/folders/1tF4qGo1Bn1f4xEKNgh_B2W0yqLjU2LpS?usp=drive_link")
+
+# Cat model
+max_length = 1283
+class Animal_Sound_Model(nn.Module):
+    def __init__(self):
+        super(Animal_Sound_Model, self).__init__()
+        self.conv1 = nn.Conv2d(1, 128, kernel_size=(3, 3), padding=1)  # Conv2d layer
+        self.pool = nn.MaxPool2d(2, 2)
+        self.dropout = nn.Dropout(0.2)
+        self.conv2 = nn.Conv2d(128, 32, kernel_size=(3, 3), padding=1)
+        self.conv3 = nn.Conv2d(32, 8, kernel_size=(3, 3), padding=1)
+        self.fc1 = nn.Linear(self.calculate_linear_input_size(), 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, 64)
+        self.fc5 = nn.Linear(64, 2)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = self.pool(x)
+        x = self.dropout(x)
+        x = F.relu(self.conv2(x))
+        x = self.pool(x)
+        x = self.dropout(x)
+        x = F.relu(self.conv3(x))
+        x = self.pool(x)
+        x = self.dropout(x)
+        x = x.view(x.size(0), -1)  # Flatten the tensor for the linear layer
+        x = torch.tanh(self.fc1(x))
+        x = torch.tanh(self.fc2(x))
+        x = torch.tanh(self.fc3(x))
+        x = torch.tanh(self.fc4(x))
+        x = torch.tanh(self.fc5(x))
+        return x
+
+    def calculate_linear_input_size(self):
+        # Temporary input for size calculation
+        temp_input = torch.zeros(1, 1, 129, max_length)
+        temp_out = self.conv1(temp_input)
+        temp_out = self.pool(temp_out)
+        temp_out = self.conv2(temp_out)
+        temp_out = self.pool(temp_out)
+        temp_out = self.conv3(temp_out)
+        temp_out = self.pool(temp_out)
+        return temp_out.view(temp_out.size(0), -1).shape[1]
+import librosa
+def process_audio(file_path, max_length):
+    # Load MP3 file
+    samples, sample_rate = librosa.load("download.mp3", sr=None, mono=True)  # sr=None ensures original sample rate is used
+
+    # Spectrogram processing
+    frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
+    padded_spectrogram = np.pad(spectrogram, ((0, 0), (0, max_length - spectrogram.shape[1])), mode='constant', constant_values=0)
+
+    return torch.tensor(padded_spectrogram, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
+
+# Load the saved model
+model = Animal_Sound_Model()
+model.load_state_dict(torch.load('best_model.pth'))
+model.eval()
+
+@app.get("/models/audio")
+async def train(request: Request):
+    return templates.TemplateResponse("audio.html", {"request": request})
+
+@app.post("/models/audio")
+async def classify_audio(file: UploadFile = File(...)):
+    max_length = 1283
+
+    # Open the file in binary write mode
+    with open("download.mp3", "wb") as f:
+        contents = await file.read()  # Read the file asynchronously
+        f.write(contents)  # Write the binary data to a file
+
+
+    # Create a temporary file for the MP3
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file:
+        contents = await file.read()  # Read the file asynchronously
+        temp_file.write(contents)
+        temp_file_path = temp_file.name
+
+    # Process audio file
+    processed_audio = process_audio(temp_file_path, max_length)
+
+    # Classify the audio
+    with torch.no_grad():
+        output = model(processed_audio)
+        prediction = torch.argmax(output, dim=1)
+        result = "Dog" if prediction.item() == 1 else "Cat"
+
+    return {"prediction": result}
 
 if __name__ == "__main__":
     import uvicorn
