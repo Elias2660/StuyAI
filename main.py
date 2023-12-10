@@ -171,6 +171,9 @@ async def read_blog(request: Request):
 async def read_about(request: Request):
     return templates.TemplateResponse("about.html", {"request": request})
 
+@app.get("/models")
+async def models(request: Request):
+    return templates.TemplateResponse("models.html", {"request": request})
 
 @app.get("/practice")
 async def read_practice(request: Request):
