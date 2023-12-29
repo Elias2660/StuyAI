@@ -936,6 +936,16 @@ plt.show()
 
     return {"message": formatted_string}
 
+# gpt2.html
+@app.get("/models/gpt2")
+async def runGPT2(request: Request):
+    return templates.TemplateResponse("gpt2.html", {"request": request})
+
+# sentence-transformers.html
+@app.get("/models/sentence-transformers")
+async def runSentenceTransformers(request: Request):
+    return templates.TemplateResponse("sentence-transformers.html", {"request": request})
+
 if __name__ == "__main__":
     import uvicorn
 
