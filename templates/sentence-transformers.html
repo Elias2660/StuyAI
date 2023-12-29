@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sentence Transformer Model Setup Guide</title>
+        <link rel="stylesheet" href="/static/models.css" />
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+        <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+    </head>
+<body>
+    <h1>Sentence Transformer Model Setup Guide</h1>
+    <p>This guide covers the setup for the Sentence Transformers model, which maps sentences to a 384-dimensional vector space, useful for semantic search and clustering.</p>
+    <h2>Installation Steps</h2>
+    <ol>
+        <li>Install Git LFS:
+            <ul>
+                <li>Mac: Use Homebrew - <code>brew install git-lfs</code>.</li>
+                <li>Linux/Windows: Download from <a href="https://git-lfs.github.com/">Git LFS website</a>.</li>
+            </ul>
+        </li>
+        <li>Clone the model repository: <code>git clone https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2</code>.</li>
+        <li>Create a new folder for your project and navigate into it: <code>cd your-folder-name</code>.</li>
+        <li>Create and activate a virtual environment:
+            <ul>
+                <li>Mac/Linux: <code>python -m venv .env</code> then <code>source .env/bin/activate</code>.</li>
+                <li>Windows: <code>python -m venv .env</code> then <code>.env\Scripts\activate</code>.</li>
+            </ul>
+        </li>
+        <li>Install Sentence Transformers: <code>pip install -U sentence-transformers</code>.</li>
+    </ol>
+    <h2>Running main.py</h2>
+    <p>Create a file named <code>main.py</code> inside your project folder. Copy and paste the provided script:</p>
+    <pre>
+        <code>
+            from sentence_transformers import SentenceTransformer
+            import numpy as np
+
+            # Function to calculate cosine similarity
+            def cosine_similarity(embedding1, embedding2):
+                return np.dot(embedding1, embedding2) / (np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
+
+            # Initialize the model
+            model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+
+            # User input for the primary sentence
+            primary_sentence = input("Enter the primary sentence: ")
+
+            # User input for the number of secondary sentences
+            num_secondary_sentences = int(input("How many secondary sentences do you want to enter? "))
+
+            # Initialize a list to hold secondary sentences
+            secondary_sentences = []
+
+            # Loop to get the secondary sentences
+            for i in range(num_secondary_sentences):
+                sentence = input(f"Enter secondary sentence {i+1}: ")
+                secondary_sentences.append(sentence)
+
+            # Embed the primary sentence
+            primary_embedding = model.encode(primary_sentence)
+
+            # Iterate over each secondary sentence, calculate, and print similarity
+            for i, secondary_sentence in enumerate(secondary_sentences):
+                secondary_embedding = model.encode(secondary_sentence)
+                similarity = cosine_similarity(primary_embedding, secondary_embedding)
+                print(f"Similarity score between \"{primary_sentence}\" and \"{secondary_sentence}\": {similarity:.2f}")
+        </code>
+    </pre>
+    <p>Run the script using <code>python main.py</code> or <code>python3 main.py</code> in your terminal.</p>
+</body>
+</html>
