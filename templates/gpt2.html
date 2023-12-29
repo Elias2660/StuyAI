@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>GPT-2 Model Setup Guide</title>
+        <link rel="stylesheet" href="/static/models.css" />
+        <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+        <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
+    </head>
+<body>
+    <h1>GPT-2 Model Setup Guide</h1>
+    <h2>Installation Steps</h2>
+    <ol>
+        <li>Install Git LFS:
+            <ul>
+                <li>Mac: Use Homebrew - <code>brew install git-lfs</code>.</li>
+                <li>Linux/Windows: Download from <a href="https://git-lfs.github.com/">Git LFS website</a>.</li>
+            </ul>
+        </li>
+        <li>Clone the GPT-2 repository: <code>git clone https://huggingface.co/gpt2</code>.</li>
+        <li>Go into the folder <code>cd gpt2</code>.</li>
+        <li>Create and activate a virtual environment:
+            <ul>
+                <li>Mac/Linux: <code>python -m venv .env</code> then <code>source .env/bin/activate</code>.</li>
+                <li>Windows: <code>python -m venv .env</code> then <code>.env\Scripts\activate</code>.</li>
+            </ul>
+        </li>
+        <li>Install required libraries:
+            <ul>
+                <li>Install Transformers: <code>pip install transformers</code>.</li>
+                <li>Install PyTorch: Follow instructions at <a href="https://pytorch.org/get-started/locally/">PyTorch Get Started</a>.</li>
+            </ul>
+        </li>
+    </ol>
+    <h2>Running main.py</h2>
+    <p>Create a file named <code>main.py</code> inside your project folder. Copy and paste the following script into this file:</p>
+    <pre>
+        <code>
+            import torch
+            import logging
+            from transformers import pipeline, set_seed
+
+            # Set logging level to ERROR to suppress informational messages
+            logging.getLogger('transformers').setLevel(logging.ERROR)
+
+            # Function to generate text using the GPT-2 model
+            def generate_text(seed_text, max_length=200, num_return_sequences=1):
+                generated = generator(seed_text, max_length=max_length, num_return_sequences=num_return_sequences)[0]["generated_text"]
+
+                # Remove the seed text from the beginning of the generated text
+                if generated.startswith(seed_text):
+                    return generated[len(seed_text):].strip()
+                return generated
+
+            # Set the device to MPS if available, else use CPU
+            device = "mps" if torch.backends.mps.is_available() else "cpu"
+
+            # Initialize the GPT-2 text-generation pipeline
+            generator = pipeline('text-generation', model='gpt2', device=device)
+
+            # Set a seed for reproducibility
+            set_seed(420)
+
+            # Get initial input from the user
+            seed_text = input("What should the first sentence be?\n")
+            max_length = int(input("Enter the maximum length for text generation (e.g., 200): "))
+            num_sequences = int(input("Enter the number of sequences to generate (usually 1): "))
+
+            # Generate initial text
+            txt = generate_text(seed_text, max_length, num_sequences)
+            print("Keep clicking enter to generate more...")
+            print(txt)
+
+            # Continue generating text on pressing Enter
+            while input("") == "":
+                # Dynamically determine the number of words for the new seed
+                # based on a fraction of max_length, e.g., half of max_length
+                num_words = max_length // 2
+                seed_words = txt.split()
+
+                # Ensure we don't exceed the actual number of words in txt
+                num_words = min(num_words, len(seed_words))
+                new_seed = " ".join(txt.split()[:num_words])
+
+                # Generate more text
+                txt = generate_text(new_seed, max_length, num_sequences)
+                print(txt)
+        </code>
+    </pre>
+    <p>Run the script using <code>python main.py</code> in your terminal. If that does not work, try <code>python main.py</code></p>
+</body>
+</html>
