@@ -129,49 +129,49 @@
     <div class="otzar">
       <canvas id="Otzar"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/1.jpg" alt="">
+        <img src="/static/1.jpg" alt="">
       </div>
     </div>
     <div class="elias">
       <canvas id="Elias"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/2.jpg" alt="">
+        <img src="/static/2.jpg" alt="">
       </div>
     </div>
     <div class="theodore">
       <canvas id="Theodore"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/3.jpg" alt="">
+        <img src="/static/3.jpg" alt="">
       </div>
     </div>
     <div class="junling">
       <canvas id="Junling"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/4.jpg" alt="">
+        <img src="/static/4.jpg" alt="">
       </div>
     </div>
     <div class="Daniel">
       <canvas id="Daniel"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/5.jpg" alt="">
+        <img src="/static/5.jpg" alt="">
       </div>
     </div>
     <div class="Zidanni">
       <canvas id="Zidanni"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/6.jpg" alt="">
+        <img src="/static/6.jpg" alt="">
       </div>
     </div>
     <div class="Preston">
       <canvas id="Preston"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/7.jpg" alt="">
+        <img src="/static/7.jpg" alt="">
       </div>
     </div>
     <div class="Mehmet">
       <canvas id="Mehmet"></canvas>
       <div class="pic-leader">
-        <img src="/static/person/8.jpg" alt="">
+        <img src="/static/8.jpg" alt="">
       </div>
     </div>
   </div>
@@ -359,20 +359,25 @@
           elem.height = 40;
         });
 
+	if (window.innerWidth < 768) {
+  named_elems.forEach((elem) => {
+    let size = window.innerWidth * 0.8;
+    elem.width = size;  // Actual drawing area width
+    elem.height = size; // Actual drawing area height
+    elem.style.width = size + "px";  // CSS width
+    elem.style.height = size + "px"; // CSS height
+  });
+} else {
+  named_elems.forEach((elem) => {
+    let size = window.innerWidth * 0.4;
+    elem.width = size;
+    elem.height = size;
+    elem.style.width = size + "px";
+    elem.style.height = size + "px";
+  });
+}
 
-        if (window.innerWidth < 768) {
-          // Do the same with the inner width
-          named_ctxs.forEach((ctx) => {
-            ctx.width = window.innerWidth * 0.8;
-            ctx.height = window.innerWidth * 0.8;
-          });
-        } else {
-          // Do the same with the inner width
-          named_ctxs.forEach((ctx) => {
-            ctx.width = window.innerWidth * 0.4;
-            ctx.height = window.innerWidth * 0.4;
-          });
-        }
+
 
         // set the style width/height of the named canvases
         named_elems.forEach((elem) => {

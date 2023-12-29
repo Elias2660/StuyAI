@@ -383,28 +383,35 @@ ACTION_SPACE_SIZE = 4672
 # Define the piece values
 PIECE_VALUES = {'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 30}
 
-class SimplifiedChessCNN(nn.Module):
+class EnhancedChessCNN(nn.Module):
     def __init__(self, action_size):
-        super(SimplifiedChessCNN, self).__init__()
-        
-        # Simplifying to fewer channels and layers
-        self.conv1 = nn.Conv2d(12, 16, kernel_size=3, stride=1, padding=1)
-        self.bn1 = nn.BatchNorm2d(16)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
-        self.bn2 = nn.BatchNorm2d(32)
+        super(EnhancedChessCNN, self).__init__()
 
-        # Simplifying the fully connected layers
-        self.fc1 = nn.Linear(32 * 8 * 8, 256)
-        self.fc2 = nn.Linear(256, action_size)
+        # Input is now 12 channels, one for each piece type for both colors
+        self.conv1 = nn.Conv2d(12, 32, kernel_size=3, stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(64)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        self.bn3 = nn.BatchNorm2d(128)
+
+        # You might experiment with the number of fully connected layers and their sizes
+        self.fc1 = nn.Linear(128 * 8 * 8, 1024)
+        self.dropout1 = nn.Dropout(p=0.3)  # Adjust dropout rate as needed
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, action_size)
 
     def forward(self, x):
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
         
         x = x.view(x.size(0), -1)  # Flatten the tensor
         
         x = F.relu(self.fc1(x))
-        return self.fc2(x)
+        x = self.dropout1(x)
+        x = F.relu(self.fc2(x))
+        return self.fc3(x)
 
 # Function to encode a move into an integer
 def encode_move(move):
@@ -439,13 +446,13 @@ def encode_board(board):
     return board_array
 
 # Load White's model
-model_white = SimplifiedChessCNN(ACTION_SPACE_SIZE)
-model_white.load_state_dict(torch.load('chess_model2025_5_black_2000.pth'))
+model_white = EnhancedChessCNN(ACTION_SPACE_SIZE)
+model_white.load_state_dict(torch.load('chess_model1000_5_black_575.pth'))
 model_white.eval()
 
 # Load Black's model
-model_black = SimplifiedChessCNN(ACTION_SPACE_SIZE)
-model_black.load_state_dict(torch.load('chess_model2025_5_black_2000.pth'))
+model_black = EnhancedChessCNN(ACTION_SPACE_SIZE)
+model_black.load_state_dict(torch.load('chess_model1000_5_black_575.pth'))
 model_black.eval()
 
 # Function to choose a move with the model
@@ -639,6 +646,14 @@ async def redirect_to_drive_folder():
 async def drive_hi_bye():
     return RedirectResponse(url="https://drive.google.com/drive/folders/1tF4qGo1Bn1f4xEKNgh_B2W0yqLjU2LpS?usp=drive_link")
 
+@app.get("/heartbeat")
+async def heartbeat():
+    return RedirectResponse(url="https://drive.google.com/drive/folders/1C_OVRjDOUEkHw_5_sKA_663x3T-w-2Ve?usp=drive_link")
+
+@app.get("/music")
+async def music():
+    return RedirectResponse(url="https://drive.google.com/drive/folders/1UdopsUna_rNoKPvwkZVuNAPoiKjhun1Q?usp=sharing")
+
 # Cat model
 max_length = 1283
 class Animal_Sound_Model(nn.Module):
@@ -729,6 +744,197 @@ async def classify_audio(file: UploadFile = File(...)):
         result = "Dog" if prediction.item() == 1 else "Cat"
 
     return {"prediction": result}
+
+@app.get("/models/audio_code")
+async def make_code(request: Request):
+        return templates.TemplateResponse("audio_code.html", {"request": request})
+
+class ConfigData(BaseModel):
+    num_layers: int
+    dropout_rate: float
+    l2_reg: float
+    batch_size: int
+    learning_rate: float
+    num_epochs: int
+    model_type: int
+
+@app.post("/audio_code_make")
+async def create_config(data: ConfigData):
+    # Formatting the sample string with the received configuration
+    formatted_string = f"""import numpy as np
+import torch
+from torch import nn
+import torch.optim as optim
+from torch.utils.data import TensorDataset, DataLoader
+import matplotlib.pyplot as plt
+from scipy import signal
+from scipy.io import wavfile
+import time
+from sklearn.model_selection import train_test_split
+import os
+
+# Paths for the two classes
+class1_path = "/content/data/jazz/"  # path
+class2_path = "/content/data/hiphop/"  # path
+
+# Neural network configuration
+num_layers = {data.num_layers}  # Define the number of convolutional layers
+dropout_rate = {data.dropout_rate}  # Dropout rate for regularization
+l2_reg = {data.l2_reg}  # L2 regularization factor
+
+batch_size = {data.batch_size}  # Number of samples per batch
+learning_rate = {data.learning_rate}  # Learning rate for the optimizer
+num_epochs = {data.num_epochs}  # Total number of training epochs
+
+# Function to read audio files and convert them into spectrograms
+def get_waveforms_labels(path, label):
+    features, labels = [], []
+    for filename in os.listdir(path):
+        if filename.endswith('.wav'):
+            try:
+                # Reading the WAV file
+                sample_rate, samples = wavfile.read(os.path.join(path, filename))
+                # Generating a spectrogram
+                frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
+                features.append(spectrogram)
+                labels.append(label)
+            except Exception as e:
+                print(f"Error reading file")
+    return features, labels
+
+# Function to pad the spectrograms to a uniform size
+def pad_spec(spectrogram, max_length):
+    return np.pad(spectrogram, ((0, 0), (0, max_length - spectrogram.shape[1])), mode='mean')
+
+# Data preprocessing
+print("Data preprocessing...")
+class1_features, class1_labels = get_waveforms_labels(class1_path, 0)
+class2_features, class2_labels = get_waveforms_labels(class2_path, 1)
+
+# Combining the features and labels
+all_features = class1_features + class2_features
+all_labels = class1_labels + class2_labels
+
+# Determining the maximum length of spectrograms
+max_length = max(s.shape[1] for s in all_features)
+
+# Padding spectrograms and converting to numpy arrays
+X = np.array([pad_spec(s, max_length) for s in all_features])
+y = np.array(all_labels)
+
+# Splitting the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print("Length X train", len(X_train))
+
+# Convert to tensors and create DataLoader for training and testing
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Preparing training data
+X_train_tensor = torch.tensor(X_train, dtype=torch.float32).unsqueeze(1).to(device)
+y_train_tensor = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1).to(device)
+train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
+# Preparing testing data
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32).unsqueeze(1).to(device)
+y_test_tensor = torch.tensor(y_test, dtype=torch.float32).unsqueeze(1).to(device)
+test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+# Neural network model definition
+class Model(nn.Module):
+    def __init__(self):
+        super(Model, self).__init__()
+        # Dynamically adding convolutional layers
+        self.layers = nn.ModuleList()
+        for i in range(num_layers):
+            in_channels = 1 if i == 0 else 8 * 2**(i-1)
+            out_channels = 8 * 2**i
+            self.layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=(3, 3), padding=1))
+            self.layers.append(nn.BatchNorm2d(out_channels))  # Added batch normalization
+            self.layers.append(nn.ReLU())
+            self.layers.append(nn.MaxPool2d(2, 2))
+            self.layers.append(nn.Dropout(dropout_rate))
+
+        # Output layer for binary classification
+        self.fc = nn.Linear(self.calculate_linear_input_size(), 1)
+
+    def forward(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        x = x.view(x.size(0), -1)
+        return self.fc(x)  # Removed sigmoid activation
+
+    # Function to calculate the input size of the fully connected layer
+    def calculate_linear_input_size(self):
+        temp_input = torch.zeros(1, 1, 129, max_length)
+        for layer in self.layers:
+            temp_input = layer(temp_input)
+        return temp_input.view(temp_input.size(0), -1).shape[1]
+
+# Initializing the model, criterion, and optimizer
+model = Model().to(device)
+criterion = nn.BCEWithLogitsLoss()
+# Changing optimizer to Adam
+optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=l2_reg)
+
+def calculate_accuracy(loader, model):
+    model.eval()
+    correct, total = 0, 0
+    with torch.no_grad():
+        for x, y in loader:
+            outputs = model(x)
+            predicted = (outputs.data > 0.5).float()  # Convert to binary predictions
+            total += y.size(0)
+            correct += (predicted == y).sum().item()
+    return correct / total
+
+# Training loop
+print("Training...")
+all_loss = []
+for epoch in range(num_epochs):
+    start_time = time.time()
+    model.train()
+    train_losses = []
+    for x, y in train_loader:
+        optimizer.zero_grad()
+        out = model(x)
+        loss = criterion(out, y)
+        loss.backward()
+        optimizer.step()
+        train_losses.append(loss.item())
+
+    # Calculate training loss and accuracy
+    avg_train_loss = np.mean(train_losses)
+    all_loss.append(avg_train_loss)
+    train_acc = calculate_accuracy(train_loader, model)
+
+    # Calculate validation accuracy
+    val_acc = calculate_accuracy(test_loader, model)  # Using test_loader as a proxy for validation
+
+    print("Epoch: " + str(epoch+1) + ", Loss-train: " + str(format(avg_train_loss, '1.3f')) + 
+      ", Train Acc: " + str(format(train_acc, '.3f')) + ", Val Acc: " + str(format(val_acc, '.3f')) + 
+      ", Time: " + str(format(time.time() - start_time, '2.2f')) + "s")
+
+# Calculate and display test set accuracy
+test_acc = calculate_accuracy(test_loader, model)
+print("Test Accuracy: " + str(test_acc))
+
+# Saving the trained model
+torch.save(model.state_dict(), 'model.pth')
+
+# Plotting training loss
+plt.title("Training Loss")
+plt.plot(range(num_epochs), all_loss)
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.show()
+"""
+    if data.model_type == 1:
+        formatted_string = formatted_string.replace("jazz", "normal").replace("hiphop", "murmur")
+
+    return {"message": formatted_string}
 
 if __name__ == "__main__":
     import uvicorn

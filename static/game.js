@@ -1,3 +1,5 @@
+let moves = 0;
+
 var board = Chessboard('myBoard', {
   draggable: true,
   position: 'start',
@@ -25,11 +27,12 @@ function handleMove(source, target) {
         success: function(response) {
 	    console.log("Success");
 	    if (response.new_board === "Checkmate") {
-		alert("Checkmate");
+		alert(`Checkmate in ${moves} moves!`);
 	    } else {
 	    	console.log(response.new_board);
             	// Update the board with the response
             	board.position(response.new_board);
+		moves += 1;
 	    }
         },
         error: function(error) {
@@ -40,4 +43,8 @@ function handleMove(source, target) {
         }
     });
 }
+
+document.getElementById('myBoard').addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
 
