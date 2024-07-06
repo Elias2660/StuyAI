@@ -1,7 +1,5 @@
 # stuyai
 
-## Version: v0.0.0
-
 ### Instructions for Use:
 To run this code, host `main.py` using FastAPI on port 8080.
 
