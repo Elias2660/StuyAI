@@ -480,3 +480,11 @@ a {
 
   .topic {width: 90vw;}
 }
+
+.junling,
+.Daniel,
+.Zidanni,
+.Preston,
+.Mehmet {
+    display: none;
+}

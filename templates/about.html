@@ -144,43 +144,14 @@
         <img src="/static/3.jpg" alt="">
       </div>
     </div>
-    <div class="junling">
-      <canvas id="Junling"></canvas>
-      <div class="pic-leader">
-        <img src="/static/4.jpg" alt="">
-      </div>
-    </div>
-    <div class="Daniel">
-      <canvas id="Daniel"></canvas>
-      <div class="pic-leader">
-        <img src="/static/5.jpg" alt="">
-      </div>
-    </div>
-    <div class="Zidanni">
-      <canvas id="Zidanni"></canvas>
-      <div class="pic-leader">
-        <img src="/static/6.jpg" alt="">
-      </div>
-    </div>
-    <div class="Preston">
-      <canvas id="Preston"></canvas>
-      <div class="pic-leader">
-        <img src="/static/7.jpg" alt="">
-      </div>
-    </div>
-    <div class="Mehmet">
-      <canvas id="Mehmet"></canvas>
-      <div class="pic-leader">
-        <img src="/static/8.jpg" alt="">
-      </div>
-    </div>
+    <!--we have up to /static/8.jpg-->
   </div>
   <article id="benefits">
     <h1>FAQs</h1>
     <h2>Is this a high or low commitment club?</h2>
     <p>We will have two meetings per week. You will only need to join one of them. One will be more concept-oriented and the other will be more coding-based.</p>
     <h2>Why this club?</h2>
-    <p>If you can only put one club in Stuyvesant on your college application, it would be the AI club. We will make our lessons publicly available so that you can send them to colleges to show the rigor of the content we go through. We will give you a personalized certificate too.</p>
+    <p>We are the only club at Stuyvesant that teaches you how to train AI model. Other clubs may disucss the impact of AI and how it is used, we but teach you how to create your own AI models.</p>
     <h2>What's up with all the animations?</h2>
     <p>The animations on this page reflect how we will break down complex concepts to make them understandable. The shapes start with many sides, and then become the simpliest shape, a triangle.</p>
   </article>
@@ -220,7 +191,7 @@
       </div>
     <div class="bottom_footer">
       <div class="copyright">
-        &copy; 2023 stuyai. All rights reserved.
+        &copy; 2023-2024 stuyai. All rights reserved.
       </div>
       <div class="priv">
         Privacy Policy
@@ -313,11 +284,6 @@
         const otzar = document.getElementById('Otzar');
         const elias = document.getElementById('Elias');
         const theodore = document.getElementById('Theodore');
-        const junling = document.getElementById('Junling');
-        const daniel = document.getElementById('Daniel');
-        const zidanni = document.getElementById('Zidanni');
-        const preston = document.getElementById('Preston');
-        const mehmet = document.getElementById('Mehmet');
 
         const ctx1 = c1.getContext('2d');
         const ctx2 = c2.getContext('2d');
@@ -329,17 +295,12 @@
         const ctxOtzar = otzar.getContext('2d');
         const ctxElias = elias.getContext('2d');
         const ctxTheodore = theodore.getContext('2d');
-        const ctxJunling = junling.getContext('2d');
-        const ctxDaniel = daniel.getContext('2d');
-        const ctxZidanni = zidanni.getContext('2d');
-        const ctxPreston = preston.getContext('2d');
-        const ctxMehmet = mehmet.getContext('2d');
 
         // Make arrays of the elements otzar...
-        let named_elems = [otzar, elias, theodore, junling, daniel, zidanni, preston, mehmet];
+        let named_elems = [otzar, elias, theodore];
 
         // Make arrays of the contexts for the named ones
-        let named_ctxs = [ctxOtzar, ctxElias, ctxTheodore, ctxJunling, ctxDaniel, ctxZidanni, ctxPreston, ctxMehmet];
+        let named_ctxs = [ctxOtzar, ctxElias, ctxTheodore];
 
         // Make arrays of the elements c1..
         let numbered_elems = [c1, c2, c3, c4, c5, c6];
@@ -544,7 +505,6 @@ for (const word of words) {
                     } else if (i == 2) {
                       smallVertices = generateVertices_Small(c3, polygons[i].currentSides, polygons[i].rotation);
 
-                      largeVertices = generateVertices_Large(junling, polygons[i].currentSides, polygons[i].rotation);
                     } 
 
                     ctx.clearRect(polygons[i].startX, 0, width / numPolygons, height);
@@ -556,32 +516,22 @@ for (const word of words) {
                       ctx4.clearRect(0, 0, 40, 40);
                       ctxOtzar.clearRect(0, 0, otzar.width, otzar.height);
                       ctxElias.clearRect(0, 0, elias.width, elias.height);
-                      ctxDaniel.clearRect(0, 0, daniel.width, daniel.height);
                       drawPolygon(ctx1, smallVertices, 0, "white", "", "");
                       drawPolygon(ctx4, smallVertices, 0, "white", "", "");
                       drawPolygon(ctxOtzar, largeVertices, 0, "black", "Otzar", `Hi! I work at an AI company. I love guitar.`);
                       drawPolygon(ctxElias, largeVertices, 0, "black", "Elias", "");
-                      drawPolygon(ctxDaniel, largeVertices, 0, "black", "Daniel", "");
                     } else if (i == 1) {
                       ctx2.clearRect(0, 0, 40, 40);
                       ctx5.clearRect(0, 0, 40, 40);
                       ctxTheodore.clearRect(0, 0, theodore.width, theodore.height);
-                      ctxMehmet.clearRect(0, 0, mehmet.width, mehmet.height);
                       drawPolygon(ctx2, smallVertices, 0, "white", "", "");
                       drawPolygon(ctx5, smallVertices, 0, "white", "", "");
-                      drawPolygon(ctxTheodore, largeVertices, 0, "black", "Theodore", "");
-                      drawPolygon(ctxMehmet, largeVertices, 0, "black", "Mehmet", "");
+                      drawPolygon(ctxTheodore, largeVertices, 0, "black", "Will", "");
                     } else if (i == 2) {
                       ctx3.clearRect(0, 0, 40, 40);
                       ctx6.clearRect(0, 0, 40, 40);
-                      ctxJunling.clearRect(0, 0, junling.width, junling.height);
-                      ctxZidanni.clearRect(0, 0, zidanni.width, zidanni.height);
-                      ctxPreston.clearRect(0, 0, preston.width, preston.height);
                       drawPolygon(ctx3, smallVertices, 0, "white", "", "");
                       drawPolygon(ctx6, smallVertices, 0, "white", "", "");
-                      drawPolygon(ctxJunling, largeVertices, 0, "black", "Junling", "");
-                      drawPolygon(ctxZidanni, largeVertices, 0, "black", "Zidanni", "");
-                      drawPolygon(ctxPreston, largeVertices, 0, "black", "Preston", "");
                     }
                 }
             }
@@ -599,11 +549,6 @@ for (const word of words) {
         ctxOtzar.scale(scale, scale);
         ctxElias.scale(scale, scale);
         ctxTheodore.scale(scale, scale);
-        ctxJunling.scale(scale, scale);
-        ctxDaniel.scale(scale, scale);
-        ctxZidanni.scale(scale, scale);
-        ctxPreston.scale(scale, scale);
-        ctxMehmet.scale(scale, scale);
         animate();
 
         function smoothScroll(e) {

@@ -19,6 +19,9 @@ import json
 import chess
 from io import StringIO
 from pydub import AudioSegment
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
@@ -71,6 +74,18 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Mount the templates directory
 templates = Jinja2Templates(directory="templates")
+
+@app.get("/download_zip/{thing}")
+async def download_thing(thing: str):
+    file_path = f"./static/{thing}.zip"
+
+    logging.info(f"File path: {file_path}")
+
+    # Check if the file exists
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path, filename=f"{thing}.zip", media_type='application/zip')
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
 
 def load_csv_data():
     data = {}
@@ -250,26 +265,49 @@ async def train(request: Request):
 @app.get("/getImageList")
 async def get_image_list():
     image_list = []
-    files = os.listdir("./static/door_raw_data/")
-    other_files = os.listdir("./static/annotations/")
+    files = os.listdir("./static/sente-training-data/medium/")
+    other_files = os.listdir("./static/sente-training-data/anno/")
     print(len(other_files)/ len(files) * 100)
     for file in files:
-        if (file[:-4] + ".txt") not in other_files:
+        if (file[:-4] + ".csv") not in other_files:
             image_list.append(file)
-    return {"images": image_list}
+    return {"images": image_list, "percentage": round(len(other_files) / len(files) * 100,3)}
 
 @app.post("/train")
 async def upload_data(
     file_name: str = Form(...),
-    annotations: str = Form(...)
+    annotations: str = Form(...),
+    sidewalk_road: str = Form(None),
+    sidewalk_width: str = Form(None),
+    crosswalk_proximity: str = Form(None)
 ):
     annotations_data = json.loads(annotations)
-    formatted_data = f"{file_name}\n"
-    for ann in annotations_data:
-        formatted_data += f"{round(ann[0]['x'])} {round(ann[0]['y'])} {round(ann[1]['x'])} {round(ann[1]['y'])}\n"
-    with open(f"static/annotations/{file_name[:-4]}.txt", "w") as label_file:
-        label_file.write(formatted_data)
-    return {"status": "success", "message": "Data uploaded successfully"}
+    # Stringify each canvas' annotations
+    canvas1_annotations = json.dumps(annotations_data[0]) if len(annotations_data) > 0 else None
+    canvas2_annotations = json.dumps(annotations_data[1]) if len(annotations_data) > 1 else None
+
+    row = {
+        "file_name": file_name,
+        "canvas1_annotations": canvas1_annotations,
+        "canvas2_annotations": canvas2_annotations,
+        "sidewalk_road": sidewalk_road,
+        "sidewalk_width": sidewalk_width if sidewalk_road == 'sidewalk' else None,
+        "crosswalk_proximity": crosswalk_proximity if sidewalk_road == 'sidewalk' else None
+    }
+
+    # Writing to a CSV file
+    csv_file = f"static/sente-training-data/anno/{file_name[:-4]}.csv"
+    with open(csv_file, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=row.keys())
+        writer.writeheader()
+        writer.writerow(row)
+
+    files = os.listdir("./static/sente-training-data/medium/")
+    other_files = os.listdir("./static/sente-training-data/anno/")
+
+    percentage = round(len(other_files) / len(files) * 100,3) 
+
+    return {"status": "success", "message": "Data uploaded successfully", "percentage": percentage}
 
 @app.post("/test")
 async def test_post(request: Request):
@@ -654,6 +692,14 @@ async def heartbeat():
 async def music():
     return RedirectResponse(url="https://drive.google.com/drive/folders/1UdopsUna_rNoKPvwkZVuNAPoiKjhun1Q?usp=sharing")
 
+@app.get("/teacher_survey")
+async def t_survey():
+    return RedirectResponse(url="https://docs.google.com/forms/d/e/1FAIpQLSfH1npEcNprMj6GsWJI0LYRZvFMXfFpUm7_VkltrF6I0pMhjw/viewform?usp=sf_link")
+
+@app.get("/student_survey")
+async def s_survey():
+    return RedirectResponse(url="https://docs.google.com/forms/d/e/1FAIpQLSfHE1YHa31SkephiI3o_ookoBwIZ4HatvygbHaOBxc6qJEHjA/viewform?usp=sf_link")
+
 # Cat model
 max_length = 1283
 class Animal_Sound_Model(nn.Module):
@@ -930,6 +976,22 @@ plt.plot(range(num_epochs), all_loss)
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.show()
+
+'''
+@app.get("/download_zip/{thing}")
+async def download_zip(thing: str):
+    file_path = f"./static/{thing}.zip"
+    
+    print(file_path, flush=True)
+
+    # Check if the file exists
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path, filename=f"{thing}.zip", media_type='application/zip')
+    else:
+        return JSONResponse({"detail": file_path})
+        #raise HTTPException(status_code=404, detail=f"File {file_path} not found")
+'''
+
 """
     if data.model_type == 1:
         formatted_string = formatted_string.replace("jazz", "normal").replace("hiphop", "murmur")
@@ -950,4 +1012,3 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

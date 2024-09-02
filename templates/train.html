@@ -3,89 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Image Annotation for ML Training</title>
-=======
-    <title>Image Upload with Annotations</title>
->>>>>>> 35e15bedf68fbb3e0d9cd5c723a033bd18407255
     <link rel="stylesheet" href="/static/train.css">
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Oxygen+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-<<<<<<< HEAD
-    <h1>Train the Doorway Model</h1>
-    <h2>Click the image to plot the upper left corner, then click again to plot the bottom right corner. Thank you!</h2>
+    <h1>Train our models</h1>
+    <h2>Click to box the cars individually. You may make many boxes. Only box cars within 300ft.</h2>
+    <progress id="progress" value="0" max="100"></progress>
+    <span id="progress-text">0%</span>
     <canvas id="canvas"></canvas>
-    <br>
-    <button onclick="clearCanvas()">Clear</button>
-    <button onclick="uploadToServer()">Upload to Server</button>
+    <br />
+    <button onclick="clearCanvas(canvas1, ctx1, img1, 0)">Clear</button>
+    <br />
+    <!-- Sidewalk or Road Question -->
+<label for="sidewalk-road">Is it a sidewalk or road?</label>
+<select id="sidewalk-road">
+  <option value="sidewalk">Sidewalk</option>
+  <option value="road">Road</option>
+</select>
 
+<!-- Sidewalk Width Question (conditionally shown) -->
+<div id="sidewalk-questions">
+  <label for="sidewalk-width">Sidewalk width:</label>
+  <select id="sidewalk-width">
+    <option value="narrow">Wide enough for at most one person going each way</option>
+    <option value="wide">Wide enough not to worry</option>
+  </select>
+
+  <!-- Proximity to Crosswalk Question (conditionally shown) -->
+  <label for="crosswalk-proximity">How close to crosswalk?</label>
+  <select id="crosswalk-proximity">
+    <option value="far">Far</option>
+    <option value="within25">Within 25ft</option>
+    <option value="endOfBlock">At the end of the block</option>
+  </select>
+</div>
+
+<!-- Road Question -->
+<div id="road-questions" style="display:none;">
+	<h2>Box the nearest sidewalk (could be the street corner). You may make many boxes.</h2>
+  <canvas id="street_corner"></canvas>
+  <button onclick="clearCanvas(canvas2, ctx2, img2, 1)">Clear</button>
+</div>
+    <button onclick="uploadToServer()">Upload to Server</button>
 <script>
+
+	// JavaScript to show/hide sidewalk width question based on first question
+  document.getElementById('sidewalk-road').addEventListener('change', function() {
+    var value = this.value;
+    var sidewalkQuestions = document.getElementById('sidewalk-questions');
+    var roadQuestions = document.getElementById('road-questions');
+    if (value === 'sidewalk') {
+      sidewalkQuestions.style.display = 'block';
+      roadQuestions.style.display = 'none';
+    } else {
+      sidewalkQuestions.style.display = 'none';
+      roadQuestions.style.display = 'block';
+    }
+  });
+
     let currentImageIndex = 0;
     let imageList = []; // List of images to be annotated
-    let annotations = []; // Array of annotations, each containing two points
-    let currentPoints = []; // Temporary storage for the current annotation points
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let img = new Image();
+    var annotations = new Array(); // Array of annotations, each containing two points
+	annotations.push([]);
+	annotations.push([]);
+	var currentPoints = new Array(); // Temporary storage for the current annotation points
+	currentPoints.push([]);
+	currentPoints.push([]);
+    const canvas1 = document.getElementById('canvas');
+    const canvas2 = document.getElementById('street_corner');
 
-    fetch('/getImageList').then(response => response.json())
-        .then(data => {
-            imageList = data.images;
-            loadImage();
-        });
+    const progress = document.getElementById('progress');
+    const progressText = document.getElementById('progress-text');
 
-    function loadImage() {
-        clearCanvasCompletely();
+    const ctx1 = canvas1.getContext('2d');
+    const ctx2 = canvas2.getContext('2d');
+
+let img1 = new Image();
+let img2 = new Image();
+
+    fetch('/getImageList')
+    	.then(response => {
+        	if (!response.ok) {
+            		throw new Error('Network response was not ok');
+        	}
+        	return response.json();
+    	})
+    	.then(data => {
+        	imageList = data.images;
+        	updateProgress(data.percentage);
+        	loadImage(canvas1, ctx1, img1, 0);
+		loadImage(canvas2, ctx2, img2, 1);
+    	})
+    	.catch(error => {
+        	console.error('Fetch error:', error);
+     });
+
+	function updateProgress(percentage) {
+    		progress.value = percentage;
+		progressText.textContent = percentage + '%';
+	}
+
+	// n is the number canvas on the page, in the order it appears in the HTML
+    function loadImage(canvas, ctx, img, n) {
+        clearCanvas(canvas, ctx, img, n);
         if (currentImageIndex >= imageList.length) {
             alert("All images annotated");
             return;
         }
-=======
-    <h1>Train the doorway model</h1>
-    <h2>Take images with one door in the image. Click the image to plot the upper left corner, then click again to plot the bottom right corner. The name field is optional. Thank you!</h2>
-    <input type="file" id="imageUpload" accept="image/*">
-    <canvas id="canvas"></canvas>
-    <br>
-    <input type="text" id="name" placeholder="Name">
-    <select id="status">
-	<option value="closed">Closed</option>
-        <option value="open">Open</option>
-    </select>
-    <br>
-    <button onclick="clearCanvas()">Clear</button>
-    <button onclick="uploadToServer()">Upload to Server</button>
-
-    <script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let img = new Image();
-let points = [];
-
-document.getElementById('imageUpload').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(evt) {
->>>>>>> 35e15bedf68fbb3e0d9cd5c723a033bd18407255
         img.onload = function() {
             canvas.width = img.width;
             canvas.height = img.height;
-            drawImageAndAnnotations();
+            drawImageAndAnnotations(canvas, ctx, img, n);
         }
-<<<<<<< HEAD
-        img.src = '/static/door_raw_data/' + imageList[currentImageIndex];
+        img.src = '/static/sente-training-data/medium/' + imageList[currentImageIndex];
     }
 
-    canvas.addEventListener('click', handleCanvasInteraction);
+	canvas1.addEventListener('click', (e) => handleCanvasInteraction(canvas1, ctx1, currentPoints, img1, 0, e));
+	canvas2.addEventListener('click', (e) => handleCanvasInteraction(canvas2, ctx2, currentPoints, img2, 1, e));
 
-    function drawImageAndAnnotations() {
+    function drawImageAndAnnotations(canvas, ctx, img, n) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
 
         ctx.lineWidth = 4;
-        annotations.forEach(ann => {
+	 if (Array.isArray(annotations[n])) {
+        annotations[n].forEach(ann => {
             ctx.beginPath();
             ctx.rect(ann[0].x, ann[0].y, ann[1].x - ann[0].x, ann[1].y - ann[0].y);
             ctx.strokeStyle = 'red';
@@ -94,142 +139,81 @@ document.getElementById('imageUpload').addEventListener('change', function(e) {
         });
 
         // Draw current points
-        currentPoints.forEach(point => {
+        currentPoints[n].forEach(point => {
             ctx.beginPath();
             ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
             ctx.fillStyle = 'red';
             ctx.fill();
             ctx.closePath();
         });
+	 }
     }
 
-    function handleCanvasInteraction(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.offsetX || e.clientX - rect.left) * scaleX;
-        const y = (e.offsetY || e.clientY - rect.top) * scaleY;
-
-        currentPoints.push({ x: x, y: y });
-        if (currentPoints.length === 2) {
-            annotations.push([...currentPoints]);
-            currentPoints = [];
+    function handleCanvasInteraction(canvas, ctx, currentPoints, img, n, e) {
+        let rect = canvas.getBoundingClientRect();
+        let scaleX = canvas.width / rect.width;
+        let scaleY = canvas.height / rect.height;
+        let x = (e.offsetX || e.clientX - rect.left) * scaleX;
+        let y = (e.offsetY || e.clientY - rect.top) * scaleY;
+console.log(currentPoints.length);
+	    if(!currentPoints[n]) {currentPoints[n] = [];}
+	    console.log(currentPoints.length)
+        currentPoints[n][currentPoints[n].length] = { x: x, y: y };
+        if (currentPoints[n].length === 2) {
+		if(!annotations[n]) {annotations[n] = [];}
+            annotations[n][annotations[n].length] = [...currentPoints[n]];
+            currentPoints[n] = [];
         }
-        drawImageAndAnnotations();
+        drawImageAndAnnotations(canvas, ctx, img, n);
     }
 
-    function clearCanvas() {
+    function clearCanvas(canvas, ctx, img, n) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
-        annotations = [];
-        currentPoints = [];
+        annotations[n] = [];
+        currentPoints[n] = [];
     }
-
-    function clearCanvasCompletely() {
-        img.src = '';
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        annotations = [];
-        currentPoints = [];
-    }
-
-    function uploadToServer() {
-        const formData = new FormData();
-        formData.append('file_name', imageList[currentImageIndex]);
-        formData.append('annotations', JSON.stringify(annotations));
-=======
-        img.src = evt.target.result;
-    }
-    reader.readAsDataURL(file);
-});
-
-canvas.addEventListener('click', handleCanvasInteraction);
-canvas.addEventListener('touchend', function(e) {
-    e.preventDefault();
-    const touch = e.changedTouches[0];
-    const rect = canvas.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    handleCanvasInteraction({ offsetX: x, offsetY: y });
-});
-
-function drawImageAndAnnotations() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-
-    // Set the line width
-    ctx.lineWidth = 4;
-
-    points.forEach(point => {
-        ctx.beginPath();
-        // Increase the radius of the arc to make it more visible
-        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
-        ctx.fillStyle = 'red';
-        ctx.fill();
-        ctx.closePath();
-    });
-
-    if (points.length === 2) {
-        ctx.beginPath();
-        ctx.rect(points[0].x, points[0].y, points[1].x - points[0].x, points[1].y - points[0].y);
-        ctx.strokeStyle = 'red';
-        ctx.stroke();
-        ctx.closePath();
-    }
-}
-
-
-function handleCanvasInteraction(e) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = (e.offsetX || e.clientX - rect.left) * scaleX;
-    const y = (e.offsetY || e.clientY - rect.top) * scaleY;
-
-    if (points.length < 2) {
-        points.push({ x: x, y: y });
-        drawImageAndAnnotations();
-    }
-}
-
-
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-    points = [];
-}
 
 function uploadToServer() {
-    if (points.length !== 2) {
-        alert("Please select two points on the image.");
-        return;
+    const formData = new FormData();
+    formData.append('file_name', imageList[currentImageIndex]);
+    formData.append('annotations', JSON.stringify(annotations));
+
+    // Add the value from the sidewalk-road dropdown
+    const sidewalkRoadElement = document.getElementById('sidewalk-road');
+    formData.append('sidewalk_road', sidewalkRoadElement.value);
+
+    // Add the values from the sidewalk questions if sidewalk is selected
+    if (sidewalkRoadElement.value === 'sidewalk') {
+        const sidewalkWidthElement = document.getElementById('sidewalk-width');
+        formData.append('sidewalk_width', sidewalkWidthElement.value);
+
+        const crosswalkProximityElement = document.getElementById('crosswalk-proximity');
+        formData.append('crosswalk_proximity', crosswalkProximityElement.value);
     }
 
-    canvas.toBlob(blob => {
-        const formData = new FormData();
-        formData.append('image', blob);
-        formData.append('name', document.getElementById('name').value);
-        formData.append('status', document.getElementById('status').value);
-        formData.append('timestamp', Date.now() / 1000);  // Equivalent to time.time() in Python
-
-        // Add the coordinates of the two points to the formData
-        formData.append('point1_x', points[0].x);
-        formData.append('point1_y', points[0].y);
-        formData.append('point2_x', points[1].x);
-        formData.append('point2_y', points[1].y);
->>>>>>> 35e15bedf68fbb3e0d9cd5c723a033bd18407255
-
-        fetch('/train', {
-            method: 'POST',
-            body: formData
-<<<<<<< HEAD
-        }).then(response => response.json()).then(result => {
-            clearCanvasCompletely();
-            currentImageIndex++;
-            loadImage();
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    }
+    // Upload data to server
+    fetch('/train', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json()).then(result => {
+        // Clear canvases and annotations, and load next image
+        clearCanvas(canvas1, ctx1, img1, 0);
+        clearCanvas(canvas2, ctx2, img2, 1);
+        annotations[0] = [];
+        annotations[1] = [];
+        currentImageIndex++;
+	updateProgress(result.percentage);
+        if (currentImageIndex < imageList.length) {
+            loadImage(canvas1, ctx1, img1, 0);
+            loadImage(canvas2, ctx2, img2, 1);
+        } else {
+            alert("All images annotated");
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
 
     document.addEventListener('keydown', function(event) {
         if (event.keyCode === 13) {  // 13 is the key code for Enter
@@ -239,17 +223,6 @@ function uploadToServer() {
 </script>
 
 
-=======
-        }).then(response => response.text()).then(result => {
-            alert('Success:', result);
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    });
-}
-
-    </script>
->>>>>>> 35e15bedf68fbb3e0d9cd5c723a033bd18407255
 </body>
 </html>
 
