@@ -671,6 +671,9 @@ async def download_file(file_name: str):
     file_path = f"{file_name}"
     return FileResponse(path=file_path, filename=file_name)
 
+@app.get("/sentiment_analysis_notebook")
+async def redir_to_sent_analy_nb():
+    return RedirectResponse(url="https://colab.research.google.com/drive/135XB9OuSr2FQuZumbkMfKw-68NjRb7h5")
 
 @app.get("/suno_ai")
 async def redirect_to_drive():
@@ -699,6 +702,20 @@ async def t_survey():
 @app.get("/student_survey")
 async def s_survey():
     return RedirectResponse(url="https://docs.google.com/forms/d/e/1FAIpQLSfHE1YHa31SkephiI3o_ookoBwIZ4HatvygbHaOBxc6qJEHjA/viewform?usp=sf_link")
+
+@app.get("/vae_mnist_blank")
+async def vae_mnist_blank():
+    return RedirectResponse(url="https://colab.research.google.com/drive/1H1grs2sofBcPt253w-bYMZK_3wwH9Yvx?usp=sharing")
+
+@app.get("/vae_mnist")
+async def vae_mnist():
+    return RedirectResponse(url="https://colab.research.google.com/drive/1WZhEeFPJPOys4aWVuPRGMRsCugZnhzfZ?usp=sharing")
+
+@app.get("/RL")
+async def RL():
+    return RedirectResponse(url="https://colab.research.google.com/drive/1-FGCUaD1pqDH_wHvUOYN3Ym3AyI8_7pW?usp=sharing")
+
+
 
 # Cat model
 max_length = 1283
